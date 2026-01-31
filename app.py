@@ -7,9 +7,6 @@ import pandas as pd
 from datetime import datetime
 import time
 
-# ==========================================
-# 页面配置
-# ==========================================
 st.set_page_config(
     page_title="Email Subscription Manager",
     page_icon="📬",
@@ -17,9 +14,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ==========================================
-# 专业简洁的CSS设计
-# ==========================================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -826,11 +820,6 @@ if st.session_state.scan_results is None:
     <div style="margin: -0.5rem 0 1rem 0; padding: 0.65rem 1rem; 
                 background: linear-gradient(to right, rgba(37, 99, 235, 0.08), rgba(37, 99, 235, 0.05)); 
                 border-left: 3px solid var(--primary); border-radius: 6px;">
-        <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
-            <span style="color: var(--primary); font-weight: 700;"></span>
-            <strong style="color: var(--text-primary);">Need help?</strong> 
-            Expand the guide below for step-by-step instructions on getting your app password.
-        </p>
     </div>
     """, unsafe_allow_html=True)
     
