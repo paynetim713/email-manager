@@ -923,9 +923,6 @@ if st.session_state.scan_results is None:
     st.markdown("""
     <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <p style="color: var(--text-secondary); font-size: 0.875rem; font-weight: 500; margin: 0;">
-                Scan Depth
-            </p>
         </div>
     """, unsafe_allow_html=True)
     
