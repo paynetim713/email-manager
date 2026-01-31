@@ -12,7 +12,7 @@ import time
 # ==========================================
 st.set_page_config(
     page_title="Email Subscription Manager",
-    page_icon="📬",
+    page_icon="",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -756,7 +756,7 @@ st.markdown("""
 if st.session_state.scan_results is None:
     
     # 使用说明
-    with st.expander("📖 How to use this tool"):
+    with st.expander("How to use this tool"):
         st.markdown("""
         <ul class="info-list">
             <li><strong>Step 1:</strong> Enter your email address</li>
@@ -799,7 +799,7 @@ if st.session_state.scan_results is None:
         st.markdown("""
         <p style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.85rem; padding: 0.75rem; 
                   background: rgba(37, 99, 235, 0.05); border-radius: 6px; border: 1px solid rgba(37, 99, 235, 0.2);">
-            <strong style="color: var(--primary);">🔒 Security Note:</strong> 
+            <strong style="color: var(--primary);">Security Note:</strong> 
             All operations are performed locally on your device. Your credentials are never stored or transmitted to any server.
         </p>
         """, unsafe_allow_html=True)
@@ -835,7 +835,7 @@ if st.session_state.scan_results is None:
                 background: linear-gradient(to right, rgba(37, 99, 235, 0.08), rgba(37, 99, 235, 0.05)); 
                 border-left: 3px solid var(--primary); border-radius: 6px;">
         <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
-            <span style="color: var(--primary); font-weight: 700;">💡</span>
+            <span style="color: var(--primary); font-weight: 700;">Note:</span>
             <strong style="color: var(--text-primary);">Need help?</strong> 
             Expand the guide below for step-by-step instructions on getting your app password.
         </p>
@@ -843,7 +843,7 @@ if st.session_state.scan_results is None:
     """, unsafe_allow_html=True)
     
     # 密码获取指南
-    with st.expander("🔑 How to get your app password", expanded=False):
+    with st.expander("How to get your app password", expanded=False):
         st.markdown("""
         <div style="padding: 0.5rem 0;">
             <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">
@@ -869,7 +869,7 @@ if st.session_state.scan_results is None:
                 <a href="https://myaccount.google.com/apppasswords" target="_blank" 
                    style="display: inline-block; margin-top: 1rem; padding: 0.5rem 1rem; background: var(--primary); 
                           color: white; text-decoration: none; border-radius: 6px; font-size: 0.9rem; font-weight: 600;">
-                    Go to Google App Passwords →
+                    Go to Google App Passwords
                 </a>
             </div>
             """, unsafe_allow_html=True)
@@ -887,7 +887,7 @@ if st.session_state.scan_results is None:
                 <a href="https://account.microsoft.com/security" target="_blank" 
                    style="display: inline-block; margin-top: 1rem; padding: 0.5rem 1rem; background: var(--primary); 
                           color: white; text-decoration: none; border-radius: 6px; font-size: 0.9rem; font-weight: 600;">
-                    Go to Microsoft Security →
+                    Go to Microsoft Security
                 </a>
             </div>
             """, unsafe_allow_html=True)
@@ -898,7 +898,7 @@ if st.session_state.scan_results is None:
                 <h4 style="color: var(--text-primary); margin-top: 0;">QQ Mail (QQ邮箱)</h4>
                 <ol style="color: var(--text-secondary); line-height: 1.8; padding-left: 1.5rem;">
                     <li>登录 <a href="https://mail.qq.com" target="_blank" style="color: var(--primary);">QQ邮箱网页版</a></li>
-                    <li>点击<strong>设置</strong> → <strong>账户</strong></li>
+                    <li>点击<strong>设置</strong> <strong>账户</strong></li>
                     <li>找到 <strong>POP3/IMAP/SMTP/Exchange/CardDAV/CalDAV服务</strong></li>
                     <li>开启 <strong>IMAP/SMTP服务</strong></li>
                     <li>点击<strong>生成授权码</strong></li>
@@ -907,7 +907,7 @@ if st.session_state.scan_results is None:
                 <a href="https://mail.qq.com" target="_blank" 
                    style="display: inline-block; margin-top: 1rem; padding: 0.5rem 1rem; background: var(--primary); 
                           color: white; text-decoration: none; border-radius: 6px; font-size: 0.9rem; font-weight: 600;">
-                    前往QQ邮箱 →
+                    前往QQ邮箱
                 </a>
             </div>
             """, unsafe_allow_html=True)
@@ -933,7 +933,7 @@ if st.session_state.scan_results is None:
                     <p><strong>163 Mail (网易邮箱):</strong></p>
                     <ul style="padding-left: 1.5rem; margin-bottom: 1rem;">
                         <li>登录 <a href="https://mail.163.com" target="_blank" style="color: var(--primary);">163邮箱</a></li>
-                        <li>设置 → POP3/SMTP/IMAP → 开启服务并生成授权码</li>
+                        <li>设置 POP3/SMTP/IMAP 开启服务并生成授权码</li>
                     </ul>
                     
                     <p style="margin-top: 1rem; padding: 1rem; background: var(--border-light); border-radius: 6px;">
@@ -946,12 +946,9 @@ if st.session_state.scan_results is None:
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # 滑块区域
+    # 滑块区域 - SCAN DEPTH LABEL REMOVED
     st.markdown("""
     <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.875rem 1rem; margin-bottom: 1.5rem;">
-        <p style="color: var(--text-secondary); font-size: 0.875rem; font-weight: 500; margin: 0 0 0.5rem 0;">
-            Scan Depth
-        </p>
     """, unsafe_allow_html=True)
     
     limit = st.slider(
@@ -1146,7 +1143,7 @@ else:
     else:
         st.markdown("""
         <div class="empty-state">
-            <div class="empty-state-icon">✓</div>
+            <div class="empty-state-icon"></div>
             <h3>Your inbox is clean</h3>
             <p>No subscriptions found in your mailbox</p>
         </div>
