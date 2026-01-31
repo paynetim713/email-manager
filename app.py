@@ -13,16 +13,12 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- CSS 样式微调：增加留白，隐藏不必要的装饰 ---
+# --- CSS 样式---
 st.markdown("""
 <style>
-    /* 调整主标题字体，更纤细现代 */
     h1 { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 300; letter-spacing: -1px; }
-    /* 侧边栏背景微调 */
     section[data-testid="stSidebar"] { background-color: #f8f9fa; }
-    /* 按钮样式简化 */
     .stButton>button { border-radius: 4px; font-weight: 500; }
-    /* 隐藏页脚 */
     footer {visibility: hidden;}
     #MainMenu {visibility: hidden;}
 </style>
@@ -43,19 +39,14 @@ def decode_field(header_value):
 def parse_unsubscribe(header_text):
     http_link = None
     mailto = None
-    
-    # 优先匹配 <url> 格式
     http_match = re.search(r'<(https?://[^>]+)>', header_text)
     if not http_match:
-        # 备用匹配纯 url
         http_match = re.search(r'(https?://\S+)', header_text)
     if http_match:
         http_link = http_match.group(1)
-
     mailto_match = re.search(r'<mailto:([^>]+)>', header_text)
     if mailto_match:
         mailto = mailto_match.group(1)
-        
     return http_link, mailto
 
 def scan_inbox(user, password, server, limit):
@@ -79,7 +70,7 @@ def scan_inbox(user, password, server, limit):
         for i, e_id in enumerate(reversed(latest_ids)):
             progress_bar.progress((i + 1) / total)
             
-            # 极速模式：只抓取 Header
+            #只抓取 Header
             _, msg_data = mail.fetch(e_id, '(BODY.PEEK[HEADER.FIELDS (FROM LIST-UNSUBSCRIBE)])')
             msg = email.message_from_bytes(msg_data[0][1])
             
@@ -117,7 +108,6 @@ def scan_inbox(user, password, server, limit):
         return []
 
 # --- 界面主逻辑 ---
-
 st.title("Email Subscription Manager")
 st.markdown("Connect to your IMAP server to detect and manage newsletter subscriptions.")
 st.divider()
@@ -150,7 +140,6 @@ with st.sidebar:
             st.warning("Please provide credentials.")
 
 # --- 结果展示 ---
-
 if st.session_state.scan_results is not None:
     data = st.session_state.scan_results
     
@@ -164,7 +153,7 @@ if st.session_state.scan_results is not None:
             column_config={
                 "Action": st.column_config.LinkColumn(
                     "Unsubscribe",
-                    display_text="Unsubscribe", # 纯文字按钮
+                    display_text="Unsubscribe", 
                     validate="^https://.*|^mailto:.*"
                 ),
                 "Source": st.column_config.TextColumn("Sender", width="large"),
