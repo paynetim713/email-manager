@@ -815,10 +815,6 @@ if st.session_state.scan_results is None:
         placeholder="Enter your app-specific password",
         help="Generate an app password from your email provider's security settings"
     )
-    
-    st.markdown("""
-    """, unsafe_allow_html=True)
-    
     # 密码获取指南
     with st.expander(" How to get your app password", expanded=False):
         st.markdown("""
