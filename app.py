@@ -290,6 +290,17 @@ st.markdown("""
     .stSlider label {
         display: none !important;
     }
+    
+    /* 隐藏所有刻度相关元素 */
+    .stSlider [data-testid*="stTickBar"] {
+        display: none !important;
+    }
+    
+    .stSlider [data-testid="stTickBar"],
+    .stSlider [data-testid="stTickBarMin"],
+    .stSlider [data-testid="stTickBarMax"] {
+        display: none !important;
+    }
 
     /* 滑块主容器 */
     .stSlider > div {
@@ -347,23 +358,9 @@ st.markdown("""
         transform: scale(1.05) !important;
     }
 
-    /* 滑块数值显示 */
-    .stSlider [data-baseweb="slider"] [data-testid="stTickBar"] {
-        color: var(--text-tertiary) !important;
-        font-size: 0.75rem !important;
-        font-weight: 500 !important;
-    }
-
     /* 当前值显示 */
     .stSlider [data-baseweb="slider"] [role="slider"] {
         color: var(--text-primary) !important;
-    }
-
-    /* 滑块最小/最大值标签 */
-    .stSlider [data-testid="stTickBarMin"],
-    .stSlider [data-testid="stTickBarMax"] {
-        color: var(--text-tertiary) !important;
-        font-size: 0.75rem !important;
     }
 
     /* Expander */
