@@ -551,29 +551,6 @@ st.markdown("""
             grid-template-columns: 1fr;
         }
     }
-
-    /* =============================================
-       【修复补丁】强制修复移动端深色模式字体颜色
-       ============================================= */
-    @media (prefers-color-scheme: dark) {
-        .stApp, h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, span, div, li, strong {
-            color: #ffffff !important; 
-        }
-        
-        .stTextInput > div > div {
-            background-color: #1f2937 !important;
-            color: white !important;
-            border-color: #374151 !important;
-        }
-        
-        .stTextInput input {
-            color: white !important;
-        }
-        
-        .subtitle, .caption, small, .help-text {
-            color: #d1d5db !important;
-        }
-    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -966,16 +943,26 @@ if st.session_state.scan_results is None:
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # 修复：直接使用 st.slider，不包裹在 div 中，避免移动端显示异常
+    # 滑块区域 - SCAN DEPTH LABEL REMOVED
+    st.markdown("""
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.875rem 1rem; margin-bottom: 1.5rem;">
+    """, unsafe_allow_html=True)
+    
     limit = st.slider(
-        "Scan Depth (Last N emails)",
+        "Number of emails to scan",
         min_value=50,
         max_value=1000,
         value=200,
-        step=50
+        step=50,
+        label_visibility="collapsed"
     )
     
-    st.caption(f"Scanning the latest {limit} emails")
+    st.markdown(f"""
+        <p style="color: var(--text-tertiary); font-size: 0.75rem; margin: 0.4rem 0 0 0; text-align: center;">
+            Scanning <strong style="color: var(--primary);">{limit}</strong> emails
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
     st.markdown("<br>", unsafe_allow_html=True)
     
