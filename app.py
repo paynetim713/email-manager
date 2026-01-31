@@ -7,6 +7,9 @@ import pandas as pd
 from datetime import datetime
 import time
 
+# ==========================================
+# 页面配置
+# ==========================================
 st.set_page_config(
     page_title="Email Subscription Manager",
     page_icon="📬",
@@ -14,6 +17,9 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+# ==========================================
+# 专业简洁的CSS设计
+# ==========================================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -277,7 +283,7 @@ st.markdown("""
     /* 滑块容器 */
     .stSlider {
         padding: 0 !important;
-        margin: 0 !important;
+        margin: 0.5rem 0 !important;
     }
 
     /* 滑块标签（隐藏） */
@@ -288,6 +294,14 @@ st.markdown("""
     /* 滑块主容器 */
     .stSlider > div {
         padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* 滑块轨道容器 */
+    .stSlider [data-baseweb="slider"] {
+        padding-top: 0.25rem !important;
+        padding-bottom: 0.25rem !important;
+        margin: 0 !important;
     }
 
     /* 滑块轨道 */
@@ -742,7 +756,7 @@ st.markdown("""
 if st.session_state.scan_results is None:
     
     # 使用说明
-    with st.expander("How to use this tool"):
+    with st.expander("📖 How to use this tool"):
         st.markdown("""
         <ul class="info-list">
             <li><strong>Step 1:</strong> Enter your email address</li>
@@ -785,7 +799,7 @@ if st.session_state.scan_results is None:
         st.markdown("""
         <p style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.85rem; padding: 0.75rem; 
                   background: rgba(37, 99, 235, 0.05); border-radius: 6px; border: 1px solid rgba(37, 99, 235, 0.2);">
-            <strong style="color: var(--primary);">Security Note:</strong> 
+            <strong style="color: var(--primary);">🔒 Security Note:</strong> 
             All operations are performed locally on your device. Your credentials are never stored or transmitted to any server.
         </p>
         """, unsafe_allow_html=True)
@@ -815,8 +829,21 @@ if st.session_state.scan_results is None:
         placeholder="Enter your app-specific password",
         help="Generate an app password from your email provider's security settings"
     )
+    
+    st.markdown("""
+    <div style="margin: -0.5rem 0 1rem 0; padding: 0.65rem 1rem; 
+                background: linear-gradient(to right, rgba(37, 99, 235, 0.08), rgba(37, 99, 235, 0.05)); 
+                border-left: 3px solid var(--primary); border-radius: 6px;">
+        <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+            <span style="color: var(--primary); font-weight: 700;">💡</span>
+            <strong style="color: var(--text-primary);">Need help?</strong> 
+            Expand the guide below for step-by-step instructions on getting your app password.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
     # 密码获取指南
-    with st.expander(" How to get your app password", expanded=False):
+    with st.expander("🔑 How to get your app password", expanded=False):
         st.markdown("""
         <div style="padding: 0.5rem 0;">
             <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">
@@ -921,7 +948,12 @@ if st.session_state.scan_results is None:
     
     # 滑块区域
     st.markdown("""
-    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.875rem 1rem; margin-bottom: 1.5rem;">
+        <p style="color: var(--text-secondary); font-size: 0.875rem; font-weight: 500; margin: 0 0 0.5rem 0;">
+            Scan Depth
+        </p>
+    """, unsafe_allow_html=True)
+    
     limit = st.slider(
         "Number of emails to scan",
         min_value=50,
@@ -932,14 +964,9 @@ if st.session_state.scan_results is None:
     )
     
     st.markdown(f"""
-        <div style="margin-top: 1rem; padding: 0.75rem; background: var(--border-light); border-radius: 6px; text-align: center;">
-            <p style="color: var(--text-primary); font-size: 0.875rem; margin: 0; font-weight: 600;">
-                Scanning <span style="color: var(--primary); font-weight: 700; font-size: 1.1rem;">{limit}</span> recent emails
-            </p>
-            <p style="color: var(--text-tertiary); font-size: 0.75rem; margin: 0.5rem 0 0 0;">
-                Higher values may take longer but find more subscriptions
-            </p>
-        </div>
+        <p style="color: var(--text-tertiary); font-size: 0.75rem; margin: 0.4rem 0 0 0; text-align: center;">
+            Scanning <strong style="color: var(--primary);">{limit}</strong> emails
+        </p>
     </div>
     """, unsafe_allow_html=True)
     
