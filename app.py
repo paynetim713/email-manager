@@ -748,7 +748,7 @@ st.markdown("""
 if st.session_state.scan_results is None:
     
     # 使用说明
-    with st.expander("📖 How to use this tool"):
+    with st.expander("How to use this tool"):
         st.markdown("""
         <ul class="info-list">
             <li><strong>Step 1:</strong> Enter your email address</li>
@@ -791,7 +791,7 @@ if st.session_state.scan_results is None:
         st.markdown("""
         <p style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.85rem; padding: 0.75rem; 
                   background: rgba(37, 99, 235, 0.05); border-radius: 6px; border: 1px solid rgba(37, 99, 235, 0.2);">
-            <strong style="color: var(--primary);">🔒 Security Note:</strong> 
+            <strong style="color: var(--primary);">Security Note:</strong> 
             All operations are performed locally on your device. Your credentials are never stored or transmitted to any server.
         </p>
         """, unsafe_allow_html=True)
@@ -827,7 +827,7 @@ if st.session_state.scan_results is None:
                 background: linear-gradient(to right, rgba(37, 99, 235, 0.08), rgba(37, 99, 235, 0.05)); 
                 border-left: 3px solid var(--primary); border-radius: 6px;">
         <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
-            <span style="color: var(--primary); font-weight: 700;">💡</span>
+            <span style="color: var(--primary); font-weight: 700;"></span>
             <strong style="color: var(--text-primary);">Need help?</strong> 
             Expand the guide below for step-by-step instructions on getting your app password.
         </p>
@@ -835,7 +835,7 @@ if st.session_state.scan_results is None:
     """, unsafe_allow_html=True)
     
     # 密码获取指南
-    with st.expander("🔑 How to get your app password", expanded=False):
+    with st.expander(" How to get your app password", expanded=False):
         st.markdown("""
         <div style="padding: 0.5rem 0;">
             <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">
