@@ -5,51 +5,113 @@ from email.header import decode_header
 import re
 import pandas as pd
 
-# --- 1. 页面基础设置 ---
+# ==========================================
+# 1. 页面配置 & 深度 CSS 定制
+# ==========================================
 st.set_page_config(
-    page_title="Subscription Manager",
-    page_icon="🛡️",
+    page_title="Mail Cleaner",
+    page_icon="⚫",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed" # 默认收起侧边栏，我们不用它了
 )
 
-# --- 2. CSS 
+# 动脑子设计的 CSS：黑白、高对比、大字号、去除默认 Streamlit 的塑料感
 st.markdown("""
 <style>
-    html, body, [class*="css"] {
-        font-family: 'Helvetica Neue', Arial, sans-serif;
+    /* === 全局重置 === */
+    .stApp {
+        background-color: #000000;
+        color: #FFFFFF;
+        font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     }
     
-    .stTextInput input {
-        color: #FFFFFF !important;
-        background-color: #262730 !important;
-        border: 1px solid #4A4A4A !important;
-    }
-    
-    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
-        color: #FFFFFF !important;
-        font-weight: 300;
-    }
-    
-    .stButton>button {
-        background-color: #FFFFFF;
-        color: #000000;
-        border: none;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-    .stButton>button:hover {
-        background-color: #E0E0E0;
-        transform: scale(1.02);
-    }
-
+    /* === 隐藏顶部红线、汉堡菜单、Footer === */
+    header {visibility: hidden;}
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header {visibility: hidden;}
+    
+    /* === 标题排版 === */
+    h1 {
+        font-weight: 800 !important;
+        letter-spacing: -2px !important;
+        font-size: 3.5rem !important;
+        border-bottom: 4px solid #FFFFFF;
+        padding-bottom: 20px;
+        margin-bottom: 40px;
+        text-transform: uppercase;
+    }
+    
+    h3 {
+        font-weight: 600;
+        border-left: 5px solid #fff;
+        padding-left: 15px;
+        margin-top: 30px;
+    }
+
+    /* === 输入框深度定制 === */
+    /* 移除默认的圆角和灰色背景，改为纯黑背景+白色粗边框 */
+    .stTextInput input, .stTextInput input:focus {
+        background-color: #000000 !important;
+        color: #FFFFFF !important;
+        border: 2px solid #FFFFFF !important;
+        border-radius: 0px !important; /* 直角，更硬朗 */
+        padding: 15px !important;
+        font-size: 1.1rem !important;
+        box-shadow: none !important;
+    }
+    
+    /* 输入框 Label */
+    .stTextInput label {
+        color: #FFFFFF !important;
+        font-size: 0.9rem !important;
+        font-weight: bold !important;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* === 按钮定制 === */
+    /* 纯白按钮，黑字，点击反转 */
+    .stButton > button {
+        width: 100%;
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+        border: 2px solid #FFFFFF !important;
+        border-radius: 0px !important;
+        font-weight: 900 !important;
+        text-transform: uppercase;
+        padding: 15px 0 !important;
+        font-size: 1.2rem !important;
+        transition: all 0.2s ease;
+    }
+    .stButton > button:hover {
+        background-color: #000000 !important;
+        color: #FFFFFF !important;
+        border: 2px solid #FFFFFF !important;
+    }
+
+    /* === 教程区域 (Expander) === */
+    .streamlit-expanderHeader {
+        background-color: #111111 !important;
+        color: #FFFFFF !important;
+        border: 1px solid #333 !important;
+        border-radius: 0px !important;
+    }
+    
+    /* === 表格样式 === */
+    [data-testid="stDataFrame"] {
+        border: 1px solid #333;
+    }
+    
+    /* 进度条颜色 */
+    .stProgress > div > div > div > div {
+        background-color: #FFFFFF;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# --- 3. 核心工具函数 ---
+# ==========================================
+# 2. 核心逻辑 (保持不变，功能最重要)
+# ==========================================
 def decode_field(header_value):
     if not header_value: return "Unknown"
     try:
@@ -58,25 +120,16 @@ def decode_field(header_value):
         if isinstance(text, bytes):
             return text.decode(encoding if encoding else 'utf-8', errors='ignore')
         return str(text)
-    except:
-        return str(header_value)
+    except: return str(header_value)
 
 def parse_unsubscribe(header_text):
     http_link = None
     mailto = None
-    
-    # 提取 HTTP 链接
     http_match = re.search(r'<(https?://[^>]+)>', header_text)
-    if not http_match:
-        http_match = re.search(r'(https?://\S+)', header_text)
-    if http_match:
-        http_link = http_match.group(1)
-
-    # 提取 mailto
+    if not http_match: http_match = re.search(r'(https?://\S+)', header_text)
+    if http_match: http_link = http_match.group(1)
     mailto_match = re.search(r'<mailto:([^>]+)>', header_text)
-    if mailto_match:
-        mailto = mailto_match.group(1)
-        
+    if mailto_match: mailto = mailto_match.group(1)
     return http_link, mailto
 
 def scan_inbox(user, password, server, limit):
@@ -84,112 +137,152 @@ def scan_inbox(user, password, server, limit):
         mail = imaplib.IMAP4_SSL(server)
         mail.login(user, password)
         mail.select("inbox")
-        
         status, messages = mail.search(None, 'ALL')
-        email_ids = messages[0].split()
-        latest_ids = email_ids[-limit:]
+        email_ids = messages[0].split()[-limit:]
         
         data_list = []
         seen_senders = set()
-
         progress_bar = st.progress(0)
         status_text = st.empty()
-        total = len(latest_ids)
-
-        for i, e_id in enumerate(reversed(latest_ids)):
-            progress_bar.progress((i + 1) / total)
+        
+        for i, e_id in enumerate(reversed(email_ids)):
+            progress_bar.progress((i + 1) / len(email_ids))
+            try:
+                _, msg_data = mail.fetch(e_id, '(BODY.PEEK[HEADER.FIELDS (FROM LIST-UNSUBSCRIBE)])')
+                msg = email.message_from_bytes(msg_data[0][1])
+                unsub = msg.get("List-Unsubscribe")
+                if unsub:
+                    sender = decode_field(msg.get("From")).split("<")[0].strip().replace('"', '')
+                    if sender not in seen_senders:
+                        link, mailto = parse_unsubscribe(unsub)
+                        if link or mailto:
+                            seen_senders.add(sender)
+                            data_list.append({
+                                "SENDER": sender, # 全大写表头，更硬朗
+                                "METHOD": "WEB LINK" if link else "EMAIL",
+                                "ACTION": link if link else f"mailto:{mailto}"
+                            })
+                            status_text.caption(f"> DETECTED: {sender}")
+            except: continue
             
-            _, msg_data = mail.fetch(e_id, '(BODY.PEEK[HEADER.FIELDS (FROM LIST-UNSUBSCRIBE)])')
-            msg = email.message_from_bytes(msg_data[0][1])
-            
-            unsub_header = msg.get("List-Unsubscribe")
-            
-            if unsub_header:
-                sender_raw = msg.get("From")
-                sender_name = decode_field(sender_raw)
-                clean_name = sender_name.split("<")[0].strip().replace('"', '')
-                
-                if clean_name in seen_senders:
-                    continue
-                
-                http_link, mailto_addr = parse_unsubscribe(unsub_header)
-                
-                if http_link or mailto_addr:
-                    seen_senders.add(clean_name)
-                    final_link = http_link if http_link else f"mailto:{mailto_addr}"
-                    link_type = "Web Link" if http_link else "Email"
-                    
-                    data_list.append({
-                        "Source": clean_name,
-                        "Type": link_type,
-                        "Action": final_link 
-                    })
-                    status_text.caption(f"Analyzing... Found: {clean_name}")
-
         mail.logout()
         progress_bar.empty()
         status_text.empty()
         return data_list
-
     except Exception as e:
-        st.error(f"Connection Error: {e}")
-        return []
+        return str(e)
 
-# --- 4. 界面主逻辑 ---
-st.title("Email Manager")
-st.caption("Privacy-focused subscription cleaner.")
-st.divider()
+# ==========================================
+# 3. 全新的 UI 布局逻辑
+# ==========================================
 
+# 状态管理
 if 'scan_results' not in st.session_state:
     st.session_state.scan_results = None
 
-with st.sidebar:
-    st.markdown("### Settings")
-    
-    email_user = st.text_input("Email Address", placeholder="name@example.com")
-    email_pass = st.text_input("App Password", type="password")
-    
-    default_server = ""
-    if "@" in email_user:
-        if "gmail" in email_user: default_server = "imap.gmail.com"
-        elif "qq" in email_user: default_server = "imap.qq.com"
-        elif "163" in email_user: default_server = "imap.163.com"
-        elif "outlook" in email_user: default_server = "outlook.office365.com"
-    
-    imap_server = st.text_input("IMAP Server", value=default_server)
-    scan_limit = st.slider("Scan Limit", 50, 500, 100)
-    
-    st.markdown("---")
-    if st.button("Start Scan"):
-        if email_user and email_pass and imap_server:
-            with st.spinner("Processing..."):
-                results = scan_inbox(email_user, email_pass, imap_server, scan_limit)
-                st.session_state.scan_results = results
-        else:
-            st.warning("Please check your credentials.")
+# --- Header ---
+st.markdown("# UNSUBSCRIBE PROTOCOL")
 
-# --- 5. 结果表格 ---
-if st.session_state.scan_results is not None:
-    data = st.session_state.scan_results
+# --- 如果还没扫描结果，显示登录分栏 ---
+if st.session_state.scan_results is None:
     
-    if len(data) > 0:
-        st.markdown(f"#### Found {len(data)} Subscriptions")
+    # 采用 4:6 分栏：左边教程，右边操作
+    col_info, col_login = st.columns([4, 6], gap="large")
+    
+    with col_info:
+        st.markdown("### 01. REQUIRED ACCESS")
+        st.markdown("""
+        To scan your inbox securely, regular passwords will not work. 
+        You **must** use an App Password.
+        """)
         
-        df = pd.DataFrame(data)
+        st.markdown("---")
+        
+        # 将难懂的教程做成折叠菜单，把“怎么做”喂到嘴边
+        with st.expander("GMAIL (Google) 教程"):
+            st.markdown("""
+            1. 登录 Google 账号 -> 安全性 (Security)
+            2. 开启 **两步验证 (2-Step Verification)**
+            3. 搜索 "App Passwords" (应用专用密码)
+            4. 创建并复制那个 **16位 乱码**
+            """)
+            
+        with st.expander("ICLOUD / QQ / OUTLOOK"):
+            st.markdown("""
+            * **QQ邮箱**: 设置 -> 账户 -> 开启IMAP -> 获取授权码
+            * **Outlook**: Account -> Security -> Advanced -> App Password
+            * **iCloud**: Apple ID -> App-Specific Passwords
+            """)
+
+    with col_login:
+        st.markdown("### 02. ESTABLISH CONNECTION")
+        
+        # 邮箱输入
+        user_email = st.text_input("YOUR EMAIL", placeholder="name@example.com")
+        
+        # 自动判断服务器逻辑
+        auto_server = ""
+        if user_email and "@" in user_email:
+            domain = user_email.split("@")[1]
+            if "gmail" in domain: auto_server = "imap.gmail.com"
+            elif "qq" in domain: auto_server = "imap.qq.com"
+            elif "163" in domain: auto_server = "imap.163.com"
+            elif "outlook" in domain or "hotmail" in domain: auto_server = "outlook.office365.com"
+            elif "icloud" in domain: auto_server = "imap.mail.me.com"
+
+        # 密码输入 (提示词修改得更直白)
+        user_pass = st.text_input("APP PASSWORD (NOT LOGIN PASS)", 
+                                type="password", 
+                                placeholder="Paste the 16-digit code here")
+        
+        # 服务器地址 (如果自动判断了就填入，否则留空)
+        server = st.text_input("IMAP ENDPOINT", value=auto_server)
+        
+        limit = st.slider("SCAN DEPTH", 50, 500, 100)
+        
+        st.markdown("<br>", unsafe_allow_html=True) # 增加一点间距
+        
+        if st.button("INITIATE SCAN"):
+            if user_email and user_pass and server:
+                with st.spinner("ACCESSING NEURAL NETWORK..."): # 稍微中二一点的提示语
+                    res = scan_inbox(user_email, user_pass, server, limit)
+                    if isinstance(res, str): # 如果返回是字符串，说明报错了
+                        st.error(f"CONNECTION FAILED: {res}")
+                        st.warning("CHECK: 1. Did you use an App Password? 2. Is IMAP enabled?")
+                    else:
+                        st.session_state.scan_results = res
+                        st.rerun() # 刷新页面进入结果页
+            else:
+                st.error("MISSING CREDENTIALS")
+
+# --- 结果展示页 (全屏) ---
+else:
+    # 顶部添加一个“重新扫描”的小按钮
+    c1, c2 = st.columns([8, 2])
+    with c1:
+        st.success(f"SCAN COMPLETE. FOUND {len(st.session_state.scan_results)} SUBSCRIPTIONS.")
+    with c2:
+        if st.button("NEW SCAN"):
+            st.session_state.scan_results = None
+            st.rerun()
+            
+    if st.session_state.scan_results:
+        df = pd.DataFrame(st.session_state.scan_results)
         
         st.dataframe(
             df,
             column_config={
-                "Action": st.column_config.LinkColumn(
-                    "Action",
-                    display_text="Unsubscribe",
+                "ACTION": st.column_config.LinkColumn(
+                    "TERMINATE", # 按钮名字改得更有攻击性
+                    display_text="UNSUBSCRIBE",
                     validate="^https://.*|^mailto:.*"
                 ),
-                "Source": st.column_config.TextColumn("Sender", width="large"),
-                "Type": st.column_config.TextColumn("Method", width="small"),
+                "SENDER": st.column_config.TextColumn("SOURCE", width="large"),
+                "METHOD": st.column_config.TextColumn("PROTOCOL", width="small"),
             },
             hide_index=True,
             use_container_width=True
         )
     else:
-        st.info("Clean inbox! No subscriptions found.")
+        st.markdown("## NO TARGETS FOUND.")
+        st.caption("Your inbox is clean.")
