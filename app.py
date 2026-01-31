@@ -922,10 +922,6 @@ if st.session_state.scan_results is None:
     # 滑块区域
     st.markdown("""
     <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-        </div>
-    """, unsafe_allow_html=True)
-    
     limit = st.slider(
         "Number of emails to scan",
         min_value=50,
