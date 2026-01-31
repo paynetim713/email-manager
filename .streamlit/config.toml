@@ -1,0 +1,7 @@
+[theme]
+base = "dark"
+primaryColor = "#FFFFFF"         # 按钮和高亮色改成白色，极简黑白风
+backgroundColor = "#0E1117"      # 主背景：深黑
+secondaryBackgroundColor = "#161920" # 侧边栏：稍浅一点的黑，增加层次感
+textColor = "#E0E0E0"            # 文字：高级灰白，不刺眼
+font = "sans serif"
