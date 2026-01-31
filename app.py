@@ -6,111 +6,130 @@ import re
 import pandas as pd
 
 # ==========================================
-# 1. 页面配置 & 深度 CSS 定制
+# 1. 页面配置
 # ==========================================
 st.set_page_config(
-    page_title="Mail Cleaner",
-    page_icon="⚫",
-    layout="wide",
-    initial_sidebar_state="collapsed" # 默认收起侧边栏，我们不用它了
+    page_title="Subscription Cleaner",
+    page_icon="✨",
+    layout="centered", # 关键：改为 centered 布局，防止大屏拉伸变丑
+    initial_sidebar_state="collapsed"
 )
 
-# 动脑子设计的 CSS：黑白、高对比、大字号、去除默认 Streamlit 的塑料感
+# ==========================================
+# 2. 顶级 CSS 设计 (现代 SaaS 风格)
+# ==========================================
 st.markdown("""
 <style>
-    /* === 全局重置 === */
+    /* 引入更现代的字体 */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+    /* === 全局背景 === */
     .stApp {
-        background-color: #000000;
-        color: #FFFFFF;
-        font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        background-color: #000000; /* 纯黑背景 */
+        font-family: 'Inter', sans-serif;
     }
-    
-    /* === 隐藏顶部红线、汉堡菜单、Footer === */
-    header {visibility: hidden;}
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    
-    /* === 标题排版 === */
+
+    /* === 核心卡片容器微调 === */
+    /* Streamlit 的 centered 布局默认宽度有点窄，我们稍微放宽一点 */
+    .block-container {
+        max-width: 700px;
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+
+    /* === 标题样式 === */
     h1 {
-        font-weight: 800 !important;
-        letter-spacing: -2px !important;
-        font-size: 3.5rem !important;
-        border-bottom: 4px solid #FFFFFF;
-        padding-bottom: 20px;
-        margin-bottom: 40px;
-        text-transform: uppercase;
+        font-weight: 600 !important;
+        font-size: 2.5rem !important;
+        color: #ffffff !important;
+        text-align: center;
+        margin-bottom: 0.5rem !important;
+        letter-spacing: -0.02em;
     }
-    
-    h3 {
-        font-weight: 600;
-        border-left: 5px solid #fff;
-        padding-left: 15px;
-        margin-top: 30px;
-    }
-
-    /* === 输入框深度定制 === */
-    /* 移除默认的圆角和灰色背景，改为纯黑背景+白色粗边框 */
-    .stTextInput input, .stTextInput input:focus {
-        background-color: #000000 !important;
-        color: #FFFFFF !important;
-        border: 2px solid #FFFFFF !important;
-        border-radius: 0px !important; /* 直角，更硬朗 */
-        padding: 15px !important;
-        font-size: 1.1rem !important;
-        box-shadow: none !important;
-    }
-    
-    /* 输入框 Label */
-    .stTextInput label {
-        color: #FFFFFF !important;
-        font-size: 0.9rem !important;
-        font-weight: bold !important;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+    .subtitle {
+        text-align: center;
+        color: #888888;
+        font-size: 1rem;
+        margin-bottom: 3rem;
+        font-weight: 400;
     }
 
-    /* === 按钮定制 === */
-    /* 纯白按钮，黑字，点击反转 */
-    .stButton > button {
-        width: 100%;
-        background-color: #FFFFFF !important;
-        color: #000000 !important;
-        border: 2px solid #FFFFFF !important;
-        border-radius: 0px !important;
-        font-weight: 900 !important;
-        text-transform: uppercase;
-        padding: 15px 0 !important;
-        font-size: 1.2rem !important;
+    /* === 输入框美化 (磨砂质感) === */
+    .stTextInput > div > div {
+        background-color: #111111 !important; /* 深灰背景 */
+        border: 1px solid #333333 !important; /* 极细边框 */
+        border-radius: 8px !important; /* 优雅圆角 */
+        color: white !important;
         transition: all 0.2s ease;
     }
-    .stButton > button:hover {
-        background-color: #000000 !important;
-        color: #FFFFFF !important;
-        border: 2px solid #FFFFFF !important;
+    
+    /* 输入框聚焦效果 */
+    .stTextInput > div > div:focus-within {
+        border-color: #666666 !important;
+        box-shadow: 0 0 0 1px #666666 !important;
+    }
+    
+    /* 输入框内的文字 */
+    input {
+        color: #ffffff !important;
     }
 
-    /* === 教程区域 (Expander) === */
-    .streamlit-expanderHeader {
-        background-color: #111111 !important;
-        color: #FFFFFF !important;
-        border: 1px solid #333 !important;
-        border-radius: 0px !important;
+    /* Label 样式 */
+    .stTextInput label {
+        color: #bbbbbb !important;
+        font-size: 0.85rem !important;
+        font-weight: 500 !important;
+        margin-bottom: 0.4rem !important;
+    }
+
+    /* === 按钮定制 (高级白) === */
+    .stButton > button {
+        width: 100%;
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 0.75rem 0 !important;
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+        margin-top: 1rem !important;
+        transition: opacity 0.2s;
+    }
+    .stButton > button:hover {
+        opacity: 0.9;
     }
     
-    /* === 表格样式 === */
+    /* === Expander (教程区域) === */
+    .streamlit-expanderHeader {
+        background-color: #000000 !important;
+        color: #666666 !important;
+        font-size: 0.85rem !important;
+        border: none !important;
+    }
+    .streamlit-expanderContent {
+        background-color: #000000 !important;
+        color: #666666 !important;
+        border: none !important;
+        font-size: 0.85rem !important;
+        padding-top: 0 !important;
+    }
+    
+    /* === 结果表格美化 === */
     [data-testid="stDataFrame"] {
         border: 1px solid #333;
+        border-radius: 8px;
+        overflow: hidden;
     }
     
-    /* 进度条颜色 */
-    .stProgress > div > div > div > div {
-        background-color: #FFFFFF;
-    }
+    /* 隐藏顶部红线和菜单 */
+    header, footer {visibility: hidden;}
+    #MainMenu {visibility: hidden;}
+    
 </style>
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 2. 核心逻辑 (保持不变，功能最重要)
+# 3. 核心逻辑
 # ==========================================
 def decode_field(header_value):
     if not header_value: return "Unknown"
@@ -143,7 +162,6 @@ def scan_inbox(user, password, server, limit):
         data_list = []
         seen_senders = set()
         progress_bar = st.progress(0)
-        status_text = st.empty()
         
         for i, e_id in enumerate(reversed(email_ids)):
             progress_bar.progress((i + 1) / len(email_ids))
@@ -158,131 +176,102 @@ def scan_inbox(user, password, server, limit):
                         if link or mailto:
                             seen_senders.add(sender)
                             data_list.append({
-                                "SENDER": sender, # 全大写表头，更硬朗
-                                "METHOD": "WEB LINK" if link else "EMAIL",
-                                "ACTION": link if link else f"mailto:{mailto}"
+                                "Sender": sender,
+                                "Type": "Web Link" if link else "Email",
+                                "Action": link if link else f"mailto:{mailto}"
                             })
-                            status_text.caption(f"> DETECTED: {sender}")
             except: continue
             
         mail.logout()
         progress_bar.empty()
-        status_text.empty()
         return data_list
     except Exception as e:
         return str(e)
 
 # ==========================================
-# 3. 全新的 UI 布局逻辑
+# 4. 界面布局
 # ==========================================
 
 # 状态管理
 if 'scan_results' not in st.session_state:
     st.session_state.scan_results = None
 
-# --- Header ---
-st.markdown("# UNSUBSCRIBE PROTOCOL")
+# --- 标题区 ---
+st.markdown("<h1>Subscription Manager</h1>", unsafe_allow_html=True)
+st.markdown("<p class='subtitle'>Connect your inbox to detect and unsubscribe from newsletters.</p>", unsafe_allow_html=True)
 
-# --- 如果还没扫描结果，显示登录分栏 ---
+# --- 登录界面 (未扫描时显示) ---
 if st.session_state.scan_results is None:
     
-    # 采用 4:6 分栏：左边教程，右边操作
-    col_info, col_login = st.columns([4, 6], gap="large")
-    
-    with col_info:
-        st.markdown("### 01. REQUIRED ACCESS")
-        st.markdown("""
-        To scan your inbox securely, regular passwords will not work. 
-        You **must** use an App Password.
-        """)
+    # 一个干净的卡片区域
+    with st.container():
+        user_email = st.text_input("Email Address", placeholder="name@example.com")
         
-        st.markdown("---")
-        
-        # 将难懂的教程做成折叠菜单，把“怎么做”喂到嘴边
-        with st.expander("GMAIL (Google) 教程"):
-            st.markdown("""
-            1. 登录 Google 账号 -> 安全性 (Security)
-            2. 开启 **两步验证 (2-Step Verification)**
-            3. 搜索 "App Passwords" (应用专用密码)
-            4. 创建并复制那个 **16位 乱码**
-            """)
-            
-        with st.expander("ICLOUD / QQ / OUTLOOK"):
-            st.markdown("""
-            * **QQ邮箱**: 设置 -> 账户 -> 开启IMAP -> 获取授权码
-            * **Outlook**: Account -> Security -> Advanced -> App Password
-            * **iCloud**: Apple ID -> App-Specific Passwords
-            """)
-
-    with col_login:
-        st.markdown("### 02. ESTABLISH CONNECTION")
-        
-        # 邮箱输入
-        user_email = st.text_input("YOUR EMAIL", placeholder="name@example.com")
-        
-        # 自动判断服务器逻辑
+        # 自动填充服务器逻辑
         auto_server = ""
         if user_email and "@" in user_email:
             domain = user_email.split("@")[1]
             if "gmail" in domain: auto_server = "imap.gmail.com"
             elif "qq" in domain: auto_server = "imap.qq.com"
             elif "163" in domain: auto_server = "imap.163.com"
-            elif "outlook" in domain or "hotmail" in domain: auto_server = "outlook.office365.com"
+            elif "outlook" in domain: auto_server = "outlook.office365.com"
             elif "icloud" in domain: auto_server = "imap.mail.me.com"
 
-        # 密码输入 (提示词修改得更直白)
-        user_pass = st.text_input("APP PASSWORD (NOT LOGIN PASS)", 
+        user_pass = st.text_input("App Password", 
                                 type="password", 
-                                placeholder="Paste the 16-digit code here")
+                                help="Not your login password. Check the guide below if unsure.",
+                                placeholder="The 16-character app password")
         
-        # 服务器地址 (如果自动判断了就填入，否则留空)
-        server = st.text_input("IMAP ENDPOINT", value=auto_server)
+        server = st.text_input("IMAP Server", value=auto_server)
         
-        limit = st.slider("SCAN DEPTH", 50, 500, 100)
+        limit = st.slider("Scan Depth (Last N emails)", 50, 500, 100)
         
-        st.markdown("<br>", unsafe_allow_html=True) # 增加一点间距
-        
-        if st.button("INITIATE SCAN"):
+        if st.button("Start Scan"):
             if user_email and user_pass and server:
-                with st.spinner("ACCESSING NEURAL NETWORK..."): # 稍微中二一点的提示语
+                with st.spinner("Connecting..."):
                     res = scan_inbox(user_email, user_pass, server, limit)
-                    if isinstance(res, str): # 如果返回是字符串，说明报错了
-                        st.error(f"CONNECTION FAILED: {res}")
-                        st.warning("CHECK: 1. Did you use an App Password? 2. Is IMAP enabled?")
+                    if isinstance(res, str):
+                        st.error(f"Error: {res}")
                     else:
                         st.session_state.scan_results = res
-                        st.rerun() # 刷新页面进入结果页
+                        st.rerun()
             else:
-                st.error("MISSING CREDENTIALS")
+                st.caption("Please fill in all fields.")
 
-# --- 结果展示页 (全屏) ---
+    # --- 极简风格的折叠教程 ---
+    st.markdown("<br>", unsafe_allow_html=True)
+    with st.expander("How to get an App Password?"):
+        st.markdown("""
+        **Gmail**: Account > Security > 2-Step Verification > App passwords  
+        **QQ**: Settings > Account > IMAP > Generate Authorization Code  
+        **Outlook**: Security > Advanced Security > App Passwords
+        """)
+
+# --- 结果展示界面 (扫描后显示) ---
 else:
-    # 顶部添加一个“重新扫描”的小按钮
-    c1, c2 = st.columns([8, 2])
+    c1, c2 = st.columns([3, 1])
     with c1:
-        st.success(f"SCAN COMPLETE. FOUND {len(st.session_state.scan_results)} SUBSCRIPTIONS.")
+        st.markdown(f"### Found {len(st.session_state.scan_results)} Subscriptions")
     with c2:
-        if st.button("NEW SCAN"):
+        if st.button("Rescan"):
             st.session_state.scan_results = None
             st.rerun()
             
     if st.session_state.scan_results:
         df = pd.DataFrame(st.session_state.scan_results)
-        
         st.dataframe(
             df,
             column_config={
-                "ACTION": st.column_config.LinkColumn(
-                    "TERMINATE", # 按钮名字改得更有攻击性
-                    display_text="UNSUBSCRIBE",
+                "Action": st.column_config.LinkColumn(
+                    "Action",
+                    display_text="Unsubscribe",
                     validate="^https://.*|^mailto:.*"
                 ),
-                "SENDER": st.column_config.TextColumn("SOURCE", width="large"),
-                "METHOD": st.column_config.TextColumn("PROTOCOL", width="small"),
+                "Sender": st.column_config.TextColumn("Sender", width="large"),
+                "Type": st.column_config.TextColumn("Type", width="small"),
             },
             hide_index=True,
             use_container_width=True
         )
     else:
-        st.markdown("## NO TARGETS FOUND.")
-        st.caption("Your inbox is clean.")
+        st.success("No active subscriptions found in the scanned range.")
