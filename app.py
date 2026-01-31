@@ -9,91 +9,131 @@ import pandas as pd
 # 1. 页面配置
 # ==========================================
 st.set_page_config(
-    page_title="Subscription Cleaner Pro",
-    page_icon="🧹",
+    page_title="Subscription Cleaner",
+    page_icon="🌓", # 图标暗示日夜切换
     layout="centered",
     initial_sidebar_state="collapsed"
 )
 
 # ==========================================
-# 2. CSS：保持青春版风格，增加交互提示
+# 2. CSS：自适应日夜双色设计
 # ==========================================
 st.markdown("""
 <style>
+    /* 引入字体 */
     @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
 
+    /* === 默认变量 (浅色模式) === */
+    :root {
+        --bg-gradient: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+        --card-bg: rgba(255, 255, 255, 0.90);
+        --text-color: #2d3436;
+        --input-bg: #f1f2f6;
+        --input-border: transparent;
+        --btn-gradient: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%);
+        --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    /* === 深色模式覆盖 (当系统处于深色模式时生效) === */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            /* 深邃的午夜渐变 */
+            --bg-gradient: linear-gradient(to right, #0f2027, #203a43, #2c5364); 
+            /* 深色磨砂玻璃 */
+            --card-bg: rgba(30, 30, 30, 0.80); 
+            --text-color: #dfe6e9;
+            --input-bg: #2d3436;
+            --input-border: 1px solid #636e72;
+            /* 赛博朋克蓝按钮 */
+            --btn-gradient: linear-gradient(45deg, #0984e3, #00cec9); 
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+    }
+
+    /* === 应用变量 === */
     .stApp {
-        background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+        background: var(--bg-gradient);
         background-attachment: fixed;
         font-family: 'Nunito', sans-serif;
     }
 
+    /* 核心卡片容器 */
     .block-container {
-        background-color: rgba(255, 255, 255, 0.95);
-        padding: 2rem 3rem !important;
+        background-color: var(--card-bg);
+        padding: 2.5rem !important;
         border-radius: 25px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(10px); /* 毛玻璃特效 */
+        max-width: 750px;
         margin-top: 2rem;
-        max-width: 800px; /* 稍微宽一点以容纳勾选框 */
     }
 
+    /* 标题颜色 */
+    h1, h2, h3, .subtitle {
+        color: var(--text-color) !important;
+    }
+    
     h1 {
-        color: #2d3436 !important;
         font-weight: 800 !important;
         text-align: center;
-        font-size: 2.2rem !important;
+        padding-bottom: 10px;
     }
     
     .subtitle {
         text-align: center;
-        color: #636e72;
+        opacity: 0.8;
         margin-bottom: 2rem;
     }
 
-    /* 输入框样式 */
+    /* 输入框适配 */
     .stTextInput > div > div {
-        background-color: #f1f2f6 !important;
-        border: none !important;
+        background-color: var(--input-bg) !important;
+        border: var(--input-border) !important;
         border-radius: 12px !important;
-        color: #2d3436 !important;
+        color: var(--text-color) !important;
     }
-    
-    /* 红色删除按钮 */
-    .delete-btn button {
-        background: linear-gradient(45deg, #ff7675, #d63031) !important;
-        color: white !important;
-        border-radius: 12px !important;
-        border: none !important;
-        font-weight: bold;
-        box-shadow: 0 4px 10px rgba(214, 48, 49, 0.3);
+    /* 输入框内的文字颜色 */
+    input {
+        color: var(--text-color) !important;
     }
-    .delete-btn button:hover {
-        transform: translateY(-2px);
-    }
-    
-    /* 普通按钮 */
-    .primary-btn button {
-        background: linear-gradient(45deg, #74b9ff, #0984e3) !important;
-        color: white !important;
-        border-radius: 12px !important;
-        border: none !important;
-        font-weight: bold;
+    /* Label 颜色 */
+    .stTextInput label {
+        color: var(--text-color) !important;
+        opacity: 0.8;
     }
 
-    /* 提示框 */
-    .stInfo {
-        background-color: #e3f2fd;
-        border-radius: 10px;
+    /* === 按钮样式 === */
+    .stButton > button {
+        background: var(--btn-gradient) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 12px !important;
+        font-weight: bold !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        transition: transform 0.2s;
+    }
+    .stButton > button:hover {
+        transform: scale(1.02);
+    }
+    
+    /* 红色删除按钮单独定义 */
+    .delete-btn button {
+        background: linear-gradient(45deg, #ff7675, #d63031) !important;
+    }
+
+    /* 表格背景适配 */
+    [data-testid="stDataFrame"] {
+        background-color: transparent !important;
     }
     
     /* 隐藏杂项 */
     header, footer, #MainMenu {visibility: hidden;}
-    
+
 </style>
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 3. 核心功能函数
+# 3. 核心功能 (保持 v9 的全功能版本)
 # ==========================================
 def decode_field(header_value):
     if not header_value: return "Unknown"
@@ -116,13 +156,11 @@ def parse_unsubscribe(header_text):
     return http_link, mailto
 
 def extract_email_address(from_header):
-    """从 'Name <email@example.com>' 中提取纯邮箱地址"""
     match = re.search(r'<([^>]+)>', from_header)
     if match:
         return match.group(1)
-    return from_header.strip() # 如果没有尖括号，直接返回
+    return from_header.strip()
 
-# 扫描功能
 def scan_inbox(user, password, server, limit):
     try:
         mail = imaplib.IMAP4_SSL(server)
@@ -138,7 +176,6 @@ def scan_inbox(user, password, server, limit):
         for i, e_id in enumerate(reversed(email_ids)):
             progress_bar.progress((i + 1) / len(email_ids))
             try:
-                # 增加了抓取 Return-Path 以便更精准删除，但这通常用 FROM 就够了
                 _, msg_data = mail.fetch(e_id, '(BODY.PEEK[HEADER.FIELDS (FROM LIST-UNSUBSCRIBE)])')
                 msg = email.message_from_bytes(msg_data[0][1])
                 unsub = msg.get("List-Unsubscribe")
@@ -146,16 +183,16 @@ def scan_inbox(user, password, server, limit):
                 if unsub:
                     from_header = decode_field(msg.get("From"))
                     sender_name = from_header.split("<")[0].strip().replace('"', '')
-                    sender_email = extract_email_address(from_header) # 提取纯邮箱用于删除
+                    sender_email = extract_email_address(from_header)
                     
-                    if sender_email not in seen_senders: # 使用邮箱地址去重更准确
+                    if sender_email not in seen_senders:
                         link, mailto = parse_unsubscribe(unsub)
                         if link or mailto:
                             seen_senders.add(sender_email)
                             data_list.append({
-                                "Select": False, # 默认不勾选
+                                "Select": False,
                                 "Sender Name": sender_name,
-                                "Sender Email": sender_email, # 隐藏列，用于后台删除
+                                "Sender Email": sender_email,
                                 "Unsubscribe Link": link if link else f"mailto:{mailto}"
                             })
             except: continue
@@ -166,29 +203,24 @@ def scan_inbox(user, password, server, limit):
     except Exception as e:
         return str(e)
 
-# 删除功能
 def delete_emails(user, password, server, targets):
-    """批量删除指定发件人的所有邮件"""
     try:
         mail = imaplib.IMAP4_SSL(server)
         mail.login(user, password)
         mail.select("inbox")
-        
         deleted_count = 0
         status_text = st.empty()
-        
         for sender_email in targets:
-            status_text.write(f"🗑️ Deleting emails from: {sender_email}...")
-            # 搜索该发件人的所有邮件
+            status_text.caption(f"Deleting emails from: {sender_email}...")
             status, messages = mail.search(None, f'(FROM "{sender_email}")')
             if status == 'OK':
                 for num in messages[0].split():
-                    mail.store(num, '+FLAGS', '\\Deleted') # 标记为删除
+                    mail.store(num, '+FLAGS', '\\Deleted')
                 deleted_count += 1
-        
-        mail.expunge() # 永久移除
+        mail.expunge()
         mail.logout()
-        return True, f"Successfully cleaned emails from {deleted_count} senders."
+        status_text.empty()
+        return True, f"Cleaned emails from {deleted_count} senders."
     except Exception as e:
         return False, str(e)
 
@@ -196,25 +228,19 @@ def delete_emails(user, password, server, targets):
 # 4. 界面逻辑
 # ==========================================
 
-# 状态管理
 if 'scan_results' not in st.session_state:
     st.session_state.scan_results = None
 if 'creds' not in st.session_state:
     st.session_state.creds = {}
 
-st.markdown("<h1>Inbox Detox</h1>", unsafe_allow_html=True)
-st.markdown("<div class='subtitle'>Unsubscribe & Delete in one go.</div>", unsafe_allow_html=True)
+st.markdown("<h1>Subscription Manager</h1>", unsafe_allow_html=True)
+st.markdown("<div class='subtitle'>Auto-detects Dark/Light mode</div>", unsafe_allow_html=True)
 
-# --- 阶段一：登录扫描 ---
+# --- 登录阶段 ---
 if st.session_state.scan_results is None:
     with st.container():
-        c1, c2 = st.columns(2)
-        with c1:
-            user_email = st.text_input("Email", placeholder="yourname@gmail.com")
-        with c2:
-            user_pass = st.text_input("App Password", type="password", placeholder="16-digit code")
-            
-        # 自动填充服务器
+        user_email = st.text_input("Email Address", placeholder="e.g. name@gmail.com")
+        
         auto_server = ""
         if user_email and "@" in user_email:
             domain = user_email.split("@")[1]
@@ -223,97 +249,73 @@ if st.session_state.scan_results is None:
             elif "163" in domain: auto_server = "imap.163.com"
             elif "outlook" in domain: auto_server = "outlook.office365.com"
             
-        server = st.text_input("Server", value=auto_server)
+        user_pass = st.text_input("App Password", type="password", placeholder="The 16-digit code")
+        server = st.text_input("IMAP Server", value=auto_server)
         limit = st.slider("Scan Depth", 50, 500, 100)
         
         st.write("")
-        col_btn, _ = st.columns([1, 0.5])
-        with col_btn:
-            st.markdown('<div class="primary-btn">', unsafe_allow_html=True)
-            if st.button("Start Scan 🔍"):
-                if user_email and user_pass and server:
-                    # 保存凭证用于后续删除操作
-                    st.session_state.creds = {"u": user_email, "p": user_pass, "s": server}
-                    with st.spinner("Scanning..."):
-                        res = scan_inbox(user_email, user_pass, server, limit)
-                        if isinstance(res, str):
-                            st.error(f"Error: {res}")
-                        else:
-                            st.session_state.scan_results = pd.DataFrame(res)
-                            st.rerun()
-            st.markdown('</div>', unsafe_allow_html=True)
+        if st.button("Start Scanning"):
+            if user_email and user_pass and server:
+                st.session_state.creds = {"u": user_email, "p": user_pass, "s": server}
+                with st.spinner("Connecting..."):
+                    res = scan_inbox(user_email, user_pass, server, limit)
+                    if isinstance(res, str):
+                        st.error(f"Connection failed: {res}")
+                    else:
+                        st.session_state.scan_results = pd.DataFrame(res)
+                        st.rerun()
 
-# --- 阶段二：管理与清理 ---
+# --- 结果管理阶段 ---
 else:
     df = st.session_state.scan_results
     
     if not df.empty:
-        st.info("💡 **How to use:** Click the link to Unsubscribe first, **THEN** check the box and click 'Delete' to remove their emails.")
+        st.success(f"Found {len(df)} subscriptions.")
         
-        # 使用 data_editor 实现可勾选的表格
         edited_df = st.data_editor(
             df,
             column_config={
-                "Select": st.column_config.CheckboxColumn(
-                    "Select",
-                    help="Select to delete emails",
-                    default=False,
-                    width="small"
-                ),
-                "Unsubscribe Link": st.column_config.LinkColumn(
-                    "Action",
-                    display_text="👉 Unsubscribe", # 引导性文字
-                    width="medium"
-                ),
+                "Select": st.column_config.CheckboxColumn("Select", default=False, width="small"),
+                "Unsubscribe Link": st.column_config.LinkColumn("Action", display_text="👉 Unsubscribe", width="medium"),
                 "Sender Name": st.column_config.TextColumn("Sender", width="large"),
-                "Sender Email": None # 隐藏真实邮箱列，界面更干净
+                "Sender Email": None
             },
             hide_index=True,
             use_container_width=True,
-            num_rows="fixed" # 禁止添加新行
+            num_rows="fixed"
         )
         
-        # 获取被勾选的行
         selected_rows = edited_df[edited_df["Select"] == True]
         selected_senders = selected_rows["Sender Email"].tolist()
         
         st.write("")
         c1, c2 = st.columns([1, 1])
         
-        # 重新扫描按钮
         with c1:
-            if st.button("🔄 Rescan Only"):
-                # 重用凭证重新扫描
+            if st.button("🔄 Rescan List"):
                 creds = st.session_state.creds
-                with st.spinner("Refreshing..."):
-                    res = scan_inbox(creds['u'], creds['p'], creds['s'], limit)
-                    st.session_state.scan_results = pd.DataFrame(res)
-                    st.rerun()
+                res = scan_inbox(creds['u'], creds['p'], creds['s'], limit)
+                st.session_state.scan_results = pd.DataFrame(res)
+                st.rerun()
 
-        # 核心功能：删除并刷新
         with c2:
             st.markdown('<div class="delete-btn">', unsafe_allow_html=True)
-            # 只有勾选了才显示删除按钮，防止误触
             if len(selected_senders) > 0:
-                if st.button(f"🗑️ Delete Emails ({len(selected_senders)})"):
+                if st.button(f"🗑️ Delete Selected ({len(selected_senders)})"):
                     creds = st.session_state.creds
-                    with st.spinner("Cleaning up inbox..."):
-                        success, msg = delete_emails(creds['u'], creds['p'], creds['s'], selected_senders)
-                        if success:
-                            st.success(msg)
-                            # 删除成功后立即重新扫描，验证是否干净了
-                            res = scan_inbox(creds['u'], creds['p'], creds['s'], limit)
-                            st.session_state.scan_results = pd.DataFrame(res)
-                            st.rerun()
-                        else:
-                            st.error(f"Failed: {msg}")
+                    success, msg = delete_emails(creds['u'], creds['p'], creds['s'], selected_senders)
+                    if success:
+                        st.success(msg)
+                        res = scan_inbox(creds['u'], creds['p'], creds['s'], limit)
+                        st.session_state.scan_results = pd.DataFrame(res)
+                        st.rerun()
             else:
-                st.button("🗑️ Delete Emails", disabled=True) # 禁用状态
+                st.button("Delete (Select first)", disabled=True)
             st.markdown('</div>', unsafe_allow_html=True)
             
     else:
         st.balloons()
-        st.success("Your inbox is clean! No subscriptions found.")
+        st.success("Your inbox is clean!")
         if st.button("Back"):
             st.session_state.scan_results = None
             st.rerun()
