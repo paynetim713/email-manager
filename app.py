@@ -8,261 +8,388 @@ from datetime import datetime
 import time
 
 # ==========================================
-# 1. 页面配置
+# 页面配置
 # ==========================================
 st.set_page_config(
     page_title="Email Subscription Manager",
-    page_icon="📧",
-    layout="centered",
+    page_icon="📬",
+    layout="wide",
     initial_sidebar_state="collapsed"
 )
 
 # ==========================================
-# 2. 增强的CSS样式
+# 专业简洁的CSS设计
 # ==========================================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-    /* === 浅色模式变量 === */
+    /* 浅色模式 */
     :root {
-        --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        --card-bg: rgba(255, 255, 255, 0.95);
-        --text-primary: #1a202c;
-        --text-secondary: #4a5568;
-        --input-bg: #f7fafc;
-        --input-border: #e2e8f0;
-        --btn-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        --btn-danger: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        --btn-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
-        --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.12);
-        --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.15);
-        --accent-color: #667eea;
+        --background: #f8f9fa;
+        --surface: #ffffff;
+        --primary: #2563eb;
+        --primary-hover: #1d4ed8;
+        --text-primary: #111827;
+        --text-secondary: #6b7280;
+        --text-tertiary: #9ca3af;
+        --border: #e5e7eb;
+        --border-light: #f3f4f6;
+        --success: #10b981;
+        --error: #ef4444;
+        --warning: #f59e0b;
+        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
 
-    /* === 深色模式变量 === */
+    /* 深色模式 */
     @media (prefers-color-scheme: dark) {
         :root {
-            --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            --card-bg: rgba(26, 32, 44, 0.95);
-            --text-primary: #f7fafc;
-            --text-secondary: #cbd5e0;
-            --input-bg: #2d3748;
-            --input-border: #4a5568;
-            --btn-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --btn-danger: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --btn-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
-            --accent-color: #667eea;
+            --background: #111827;
+            --surface: #1f2937;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --text-tertiary: #9ca3af;
+            --border: #374151;
+            --border-light: #2d3748;
+            --success: #34d399;
+            --error: #f87171;
+            --warning: #fbbf24;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
         }
     }
 
-    /* === 全局样式 === */
-    .stApp {
-        background: var(--bg-gradient);
-        background-attachment: fixed;
+    /* 全局样式 */
+    * {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    .block-container {
-        background-color: var(--card-bg);
-        padding: 3rem 2.5rem !important;
-        border-radius: 20px;
-        box-shadow: var(--shadow-lg);
-        backdrop-filter: blur(20px);
-        max-width: 900px;
-        margin-top: 2rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+    .stApp {
+        background-color: var(--background);
     }
 
-    /* === 标题样式 === */
-    h1 {
-        color: var(--text-primary) !important;
-        font-weight: 700 !important;
-        text-align: center;
-        font-size: 2.5rem !important;
-        margin-bottom: 0.5rem !important;
-        letter-spacing: -0.02em;
+    .main .block-container {
+        max-width: 1200px;
+        padding: 2rem 1rem;
     }
-    
+
+    /* 标题区域 */
+    .header-container {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .main-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 0.5rem 0;
+        letter-spacing: -0.025em;
+    }
+
     .subtitle {
-        color: var(--text-secondary) !important;
-        text-align: center;
-        font-size: 1.1rem;
-        margin-bottom: 2.5rem;
-        font-weight: 500;
+        font-size: 1rem;
+        color: var(--text-secondary);
+        font-weight: 400;
+        margin: 0;
     }
 
-    h2, h3 {
-        color: var(--text-primary) !important;
-        font-weight: 600 !important;
+    /* 卡片样式 */
+    .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: var(--shadow);
     }
 
-    /* === 输入框样式 === */
+    .card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 1rem 0;
+    }
+
+    /* 输入框 */
     .stTextInput > div > div,
     .stNumberInput > div > div {
-        background-color: var(--input-bg) !important;
-        border: 1px solid var(--input-border) !important;
-        border-radius: 10px !important;
-        transition: all 0.3s ease;
+        background-color: var(--surface) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 6px !important;
     }
 
     .stTextInput > div > div:focus-within,
     .stNumberInput > div > div:focus-within {
-        border-color: var(--accent-color) !important;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
     }
 
-    input, input::placeholder {
+    input {
         color: var(--text-primary) !important;
-        opacity: 1 !important;
+        font-size: 0.9rem !important;
+    }
+
+    input::placeholder {
+        color: var(--text-tertiary) !important;
     }
 
     label {
-        color: var(--text-primary) !important;
+        color: var(--text-secondary) !important;
+        font-size: 0.875rem !important;
         font-weight: 500 !important;
-        font-size: 0.9rem !important;
         margin-bottom: 0.5rem !important;
     }
 
-    /* === 按钮样式 === */
+    /* 按钮 */
     .stButton > button {
-        background: var(--btn-primary) !important;
+        background-color: var(--primary) !important;
         color: white !important;
         border: none !important;
-        border-radius: 10px !important;
+        border-radius: 6px !important;
+        font-size: 0.9rem !important;
         font-weight: 600 !important;
-        padding: 0.6rem 1.5rem !important;
-        box-shadow: var(--shadow-sm);
-        transition: all 0.3s ease;
-        width: 100%;
+        padding: 0.6rem 1.2rem !important;
+        transition: all 0.2s !important;
+        box-shadow: var(--shadow) !important;
     }
 
     .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
+        background-color: var(--primary-hover) !important;
+        box-shadow: var(--shadow-md) !important;
     }
 
-    .stButton > button:active {
-        transform: translateY(0);
+    .stButton > button:disabled {
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
     }
 
-    /* 删除按钮 */
-    .delete-btn button {
-        background: var(--btn-danger) !important;
+    /* 按钮变体 */
+    .btn-danger button {
+        background-color: var(--error) !important;
     }
 
-    /* 扫描按钮 */
-    .scan-btn button {
-        background: var(--btn-success) !important;
+    .btn-danger button:hover {
+        background-color: #dc2626 !important;
     }
 
-    /* === 信息卡片 === */
-    .info-card {
-        background: var(--input-bg);
-        border-radius: 12px;
-        padding: 1.2rem;
-        margin: 1rem 0;
-        border-left: 4px solid var(--accent-color);
+    .btn-success button {
+        background-color: var(--success) !important;
     }
 
-    .info-card h3 {
-        margin-top: 0;
-        font-size: 1.1rem;
+    .btn-success button:hover {
+        background-color: #059669 !important;
     }
 
-    .info-card ul {
-        margin: 0.5rem 0;
-        padding-left: 1.5rem;
+    .btn-secondary button {
+        background-color: var(--border-light) !important;
+        color: var(--text-primary) !important;
     }
 
-    .info-card li {
-        color: var(--text-secondary);
-        margin: 0.3rem 0;
+    .btn-secondary button:hover {
+        background-color: var(--border) !important;
     }
 
-    /* === 统计卡片 === */
+    /* 统计卡片 */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
     .stat-card {
-        background: var(--input-bg);
-        border-radius: 12px;
-        padding: 1.5rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.25rem;
         text-align: center;
-        box-shadow: var(--shadow-sm);
     }
 
-    .stat-number {
-        font-size: 2.5rem;
+    .stat-value {
+        font-size: 2rem;
         font-weight: 700;
-        color: var(--accent-color);
+        color: var(--primary);
         margin: 0;
+        line-height: 1;
     }
 
     .stat-label {
+        font-size: 0.875rem;
         color: var(--text-secondary);
-        font-size: 0.9rem;
         margin-top: 0.5rem;
+        font-weight: 500;
     }
 
-    /* === 表格样式 === */
+    /* 表格 */
     [data-testid="stDataFrame"] {
-        border-radius: 10px;
-        overflow: hidden;
+        border: 1px solid var(--border) !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
     }
 
-    /* === 进度条 === */
-    .stProgress > div > div {
-        background-color: var(--accent-color) !important;
+    [data-testid="stDataFrame"] th {
+        background-color: var(--border-light) !important;
+        color: var(--text-primary) !important;
+        font-weight: 600 !important;
+        font-size: 0.875rem !important;
+        padding: 0.75rem !important;
     }
 
-    /* === 提示框样式 === */
+    [data-testid="stDataFrame"] td {
+        color: var(--text-secondary) !important;
+        font-size: 0.875rem !important;
+        padding: 0.75rem !important;
+    }
+
+    /* 提示信息 */
     .stAlert {
-        border-radius: 10px;
-        border: none;
-        box-shadow: var(--shadow-sm);
+        border-radius: 6px !important;
+        border: 1px solid transparent !important;
+        font-size: 0.9rem !important;
     }
 
-    /* === 滑块样式 === */
-    .stSlider > div > div > div {
-        background-color: var(--accent-color) !important;
+    .stSuccess {
+        background-color: rgba(16, 185, 129, 0.1) !important;
+        border-color: var(--success) !important;
+        color: var(--text-primary) !important;
     }
 
-    /* === 隐藏元素 === */
+    .stError {
+        background-color: rgba(239, 68, 68, 0.1) !important;
+        border-color: var(--error) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .stWarning {
+        background-color: rgba(245, 158, 11, 0.1) !important;
+        border-color: var(--warning) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .stInfo {
+        background-color: rgba(37, 99, 235, 0.1) !important;
+        border-color: var(--primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    /* 滑块 */
+    .stSlider [data-baseweb="slider"] {
+        background-color: var(--primary) !important;
+    }
+
+    /* Expander */
+    .streamlit-expanderHeader {
+        background-color: var(--surface) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 6px !important;
+        color: var(--text-primary) !important;
+        font-weight: 500 !important;
+    }
+
+    .streamlit-expanderContent {
+        background-color: var(--surface) !important;
+        border: 1px solid var(--border) !important;
+        border-top: none !important;
+        border-radius: 0 0 6px 6px !important;
+    }
+
+    /* 进度条 */
+    .stProgress > div > div {
+        background-color: var(--primary) !important;
+    }
+
+    /* 隐藏元素 */
     header, footer, #MainMenu {
         visibility: hidden;
     }
 
-    /* === 响应式设计 === */
+    /* 帮助文本 */
+    .help-text {
+        font-size: 0.875rem;
+        color: var(--text-tertiary);
+        margin-top: 0.25rem;
+    }
+
+    /* 分隔线 */
+    hr {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 2rem 0;
+    }
+
+    /* 操作按钮组 */
+    .action-buttons {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+
+    /* 信息列表 */
+    .info-list {
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0;
+    }
+
+    .info-list li {
+        color: var(--text-secondary);
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border-light);
+        font-size: 0.9rem;
+    }
+
+    .info-list li:last-child {
+        border-bottom: none;
+    }
+
+    .info-list strong {
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+
+    /* 空状态 */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--text-secondary);
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    /* 响应式 */
     @media (max-width: 768px) {
-        .block-container {
-            padding: 2rem 1.5rem !important;
+        .main .block-container {
+            padding: 1rem 0.5rem;
         }
-        
-        h1 {
-            font-size: 2rem !important;
+
+        .main-title {
+            font-size: 1.5rem;
         }
-    }
 
-    /* === 加载动画 === */
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-    }
-
-    .loading {
-        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 3. 辅助函数
+# 核心功能函数
 # ==========================================
 
 def decode_field(header_value):
-    """解码邮件头部字段"""
     if not header_value:
         return "Unknown"
     try:
@@ -271,22 +398,19 @@ def decode_field(header_value):
         if isinstance(text, bytes):
             return text.decode(encoding if encoding else 'utf-8', errors='ignore')
         return str(text)
-    except Exception:
+    except:
         return str(header_value)
 
 def parse_unsubscribe(header_text):
-    """解析退订链接"""
     http_link = None
     mailto = None
     
-    # 提取HTTP链接
     http_match = re.search(r'<(https?://[^>]+)>', header_text)
     if not http_match:
         http_match = re.search(r'(https?://\S+)', header_text)
     if http_match:
         http_link = http_match.group(1)
     
-    # 提取mailto链接
     mailto_match = re.search(r'<mailto:([^>]+)>', header_text)
     if mailto_match:
         mailto = mailto_match.group(1)
@@ -294,14 +418,12 @@ def parse_unsubscribe(header_text):
     return http_link, mailto
 
 def extract_email_address(from_header):
-    """提取邮件地址"""
     match = re.search(r'<([^>]+)>', from_header)
     if match:
         return match.group(1)
     return from_header.strip()
 
 def get_imap_server(email_address):
-    """根据邮箱地址自动识别IMAP服务器"""
     if not email_address or "@" not in email_address:
         return ""
     
@@ -316,11 +438,8 @@ def get_imap_server(email_address):
         "qq.com": "imap.qq.com",
         "163.com": "imap.163.com",
         "126.com": "imap.126.com",
-        "yeah.net": "imap.yeah.net",
         "yahoo.com": "imap.mail.yahoo.com",
         "icloud.com": "imap.mail.me.com",
-        "aol.com": "imap.aol.com",
-        "zoho.com": "imap.zoho.com",
     }
     
     for key, server in imap_servers.items():
@@ -330,22 +449,16 @@ def get_imap_server(email_address):
     return f"imap.{domain}"
 
 def scan_inbox(user, password, server, limit):
-    """扫描邮箱中的订阅邮件"""
     try:
-        # 连接到IMAP服务器
         mail = imaplib.IMAP4_SSL(server, timeout=30)
         mail.login(user, password)
         mail.select("inbox")
         
-        # 搜索所有邮件
         status, messages = mail.search(None, 'ALL')
         if status != 'OK':
             return "Failed to search emails"
         
         email_ids = messages[0].split()
-        total_emails = len(email_ids)
-        
-        # 限制扫描数量
         email_ids = email_ids[-limit:]
         
         data_list = []
@@ -356,10 +469,9 @@ def scan_inbox(user, password, server, limit):
         for i, e_id in enumerate(reversed(email_ids)):
             progress = (i + 1) / len(email_ids)
             progress_bar.progress(progress)
-            status_text.caption(f"Scanning... {i + 1}/{len(email_ids)} emails")
+            status_text.caption(f"Scanning: {i + 1} / {len(email_ids)}")
             
             try:
-                # 只获取必要的头部信息
                 _, msg_data = mail.fetch(e_id, '(BODY.PEEK[HEADER.FIELDS (FROM LIST-UNSUBSCRIBE DATE)])')
                 
                 if not msg_data or not msg_data[0]:
@@ -373,19 +485,17 @@ def scan_inbox(user, password, server, limit):
                     sender_name = from_header.split("<")[0].strip().replace('"', '')
                     sender_email = extract_email_address(from_header)
                     
-                    # 去重
                     if sender_email not in seen_senders:
                         link, mailto = parse_unsubscribe(unsub)
                         
                         if link or mailto:
                             seen_senders.add(sender_email)
                             
-                            # 获取最后收到邮件的日期
                             date_header = msg.get("Date")
                             date_str = "Unknown"
                             if date_header:
                                 try:
-                                    date_str = decode_field(date_header)
+                                    date_str = decode_field(date_header)[:16]
                                 except:
                                     pass
                             
@@ -397,7 +507,7 @@ def scan_inbox(user, password, server, limit):
                                 "Unsubscribe": link if link else f"mailto:{mailto}"
                             })
             
-            except Exception as e:
+            except:
                 continue
         
         mail.logout()
@@ -406,13 +516,10 @@ def scan_inbox(user, password, server, limit):
         
         return data_list
     
-    except imaplib.IMAP4.error as e:
-        return f"IMAP Error: {str(e)}"
     except Exception as e:
-        return f"Connection Error: {str(e)}"
+        return f"Error: {str(e)}"
 
 def delete_emails(user, password, server, targets):
-    """删除指定发件人的所有邮件"""
     try:
         mail = imaplib.IMAP4_SSL(server, timeout=30)
         mail.login(user, password)
@@ -426,9 +533,8 @@ def delete_emails(user, password, server, targets):
         for i, sender_email in enumerate(targets):
             progress = (i + 1) / len(targets)
             progress_bar.progress(progress)
-            status_text.caption(f"Deleting emails from: {sender_email}...")
+            status_text.caption(f"Deleting from: {sender_email}")
             
-            # 搜索该发件人的所有邮件
             status, messages = mail.search(None, f'(FROM "{sender_email}")')
             
             if status == 'OK' and messages[0]:
@@ -438,20 +544,19 @@ def delete_emails(user, password, server, targets):
                     total_deleted += 1
                 deleted_count += 1
         
-        # 永久删除
         mail.expunge()
         mail.logout()
         
         progress_bar.empty()
         status_text.empty()
         
-        return True, f"Successfully deleted {total_deleted} emails from {deleted_count} senders"
+        return True, f"Deleted {total_deleted} emails from {deleted_count} senders"
     
     except Exception as e:
-        return False, f"Delete Error: {str(e)}"
+        return False, f"Error: {str(e)}"
 
 # ==========================================
-# 4. 初始化会话状态
+# 会话状态初始化
 # ==========================================
 
 if 'scan_results' not in st.session_state:
@@ -464,168 +569,148 @@ if 'last_scan_time' not in st.session_state:
     st.session_state.last_scan_time = None
 
 # ==========================================
-# 5. 主界面
+# 主界面
 # ==========================================
 
-st.markdown("<h1>📧 Email Subscription Manager</h1>", unsafe_allow_html=True)
-st.markdown("<div class='subtitle'>Clean your inbox from unwanted subscriptions</div>", unsafe_allow_html=True)
+# 标题
+st.markdown("""
+<div class="header-container">
+    <h1 class="main-title">Email Subscription Manager</h1>
+    <p class="subtitle">Clean your inbox from unwanted subscriptions</p>
+</div>
+""", unsafe_allow_html=True)
 
-# --- 登录阶段 ---
+# 登录阶段
 if st.session_state.scan_results is None:
     
     # 使用说明
-    with st.expander("ℹ️ How to use this tool", expanded=False):
+    with st.expander("How to use this tool"):
         st.markdown("""
-        <div class='info-card'>
-            <h3>📋 Step-by-Step Guide:</h3>
-            <ul>
-                <li><strong>Step 1:</strong> Enter your email address</li>
-                <li><strong>Step 2:</strong> Generate an app password (not your regular password)</li>
-                <li><strong>Step 3:</strong> Click "Start Scanning" to find subscriptions</li>
-                <li><strong>Step 4:</strong> Select unwanted subscriptions and delete them</li>
-            </ul>
-            
-            <h3>🔐 How to get App Password:</h3>
-            <ul>
-                <li><strong>Gmail:</strong> Google Account → Security → 2-Step Verification → App passwords</li>
-                <li><strong>Outlook:</strong> Account Security → Additional security options → App passwords</li>
-                <li><strong>QQ Mail:</strong> Settings → Account → Generate authorization code</li>
-            </ul>
-            
-            <h3>🔒 Privacy & Security:</h3>
-            <ul>
-                <li>All operations are performed directly on your device</li>
-                <li>Your credentials are not stored or transmitted</li>
-                <li>Use app-specific passwords, not your main password</li>
-            </ul>
-        </div>
+        <ul class="info-list">
+            <li><strong>Step 1:</strong> Enter your email address</li>
+            <li><strong>Step 2:</strong> Generate an app-specific password (not your regular password)</li>
+            <li><strong>Step 3:</strong> Click Start Scanning to find subscriptions</li>
+            <li><strong>Step 4:</strong> Select unwanted subscriptions and delete them</li>
+        </ul>
+        
+        <p style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.9rem;">
+            <strong>Security:</strong> All operations are performed locally. Your credentials are never stored or transmitted.
+        </p>
         """, unsafe_allow_html=True)
     
-    st.write("")
+    st.markdown("<br>", unsafe_allow_html=True)
     
-    # 邮箱输入
-    user_email = st.text_input(
-        "📮 Email Address",
-        placeholder="example@gmail.com",
-        help="Enter the email address you want to scan"
-    )
+    # 登录表单
+    col1, col2 = st.columns([2, 1])
     
-    # 自动检测IMAP服务器
-    auto_server = get_imap_server(user_email)
+    with col1:
+        user_email = st.text_input(
+            "Email Address",
+            placeholder="your.email@example.com"
+        )
     
-    # 密码输入
+    with col2:
+        auto_server = get_imap_server(user_email)
+        server = st.text_input(
+            "IMAP Server",
+            value=auto_server,
+            placeholder="imap.gmail.com"
+        )
+    
     user_pass = st.text_input(
-        "🔑 App Password",
+        "App Password",
         type="password",
-        placeholder="Your app-specific password (not regular password)",
-        help="Use an app password for security. Never use your main email password."
+        placeholder="Enter your app-specific password",
+        help="Generate an app password from your email provider's security settings"
     )
     
-    # IMAP服务器
-    server = st.text_input(
-        "🌐 IMAP Server",
-        value=auto_server,
-        placeholder="imap.gmail.com",
-        help="IMAP server address (auto-detected for common providers)"
-    )
-    
-    # 扫描深度
     limit = st.slider(
-        "🔍 Scan Depth (number of emails to scan)",
+        "Number of emails to scan",
         min_value=50,
         max_value=1000,
         value=200,
-        step=50,
-        help="Higher values take longer but find more subscriptions"
+        step=50
     )
     
-    st.write("")
+    st.markdown("<br>", unsafe_allow_html=True)
     
-    # 扫描按钮
-    col1, col2, col3 = st.columns([1, 2, 1])
+    col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
-        st.markdown('<div class="scan-btn">', unsafe_allow_html=True)
-        scan_button = st.button("🚀 Start Scanning", use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    if scan_button:
-        if not user_email or not user_pass or not server:
-            st.error("⚠️ Please fill in all fields")
-        elif "@" not in user_email:
-            st.error("⚠️ Please enter a valid email address")
-        else:
-            # 保存凭证
-            st.session_state.creds = {
-                "u": user_email,
-                "p": user_pass,
-                "s": server,
-                "limit": limit
-            }
-            
-            with st.spinner("🔄 Connecting to your mailbox..."):
-                res = scan_inbox(user_email, user_pass, server, limit)
+        st.markdown('<div class="btn-success">', unsafe_allow_html=True)
+        if st.button("Start Scanning", use_container_width=True):
+            if not user_email or not user_pass or not server:
+                st.error("Please fill in all required fields")
+            elif "@" not in user_email:
+                st.error("Please enter a valid email address")
+            else:
+                st.session_state.creds = {
+                    "u": user_email,
+                    "p": user_pass,
+                    "s": server,
+                    "limit": limit
+                }
                 
-                if isinstance(res, str):
-                    st.error(f"❌ {res}")
-                    st.info("💡 Troubleshooting tips:\n- Make sure you're using an app password, not your regular password\n- Check if IMAP is enabled in your email settings\n- Verify the IMAP server address is correct")
-                else:
-                    st.session_state.scan_results = pd.DataFrame(res)
-                    st.session_state.last_scan_time = datetime.now()
-                    st.rerun()
+                with st.spinner("Connecting to your mailbox..."):
+                    res = scan_inbox(user_email, user_pass, server, limit)
+                    
+                    if isinstance(res, str):
+                        st.error(res)
+                    else:
+                        st.session_state.scan_results = pd.DataFrame(res)
+                        st.session_state.last_scan_time = datetime.now()
+                        st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
 
-# --- 结果管理阶段 ---
+# 结果管理阶段
 else:
     df = st.session_state.scan_results
     
     if not df.empty:
         # 统计信息
-        col1, col2, col3 = st.columns(3)
+        selected_count = len(df[df["Select"] == True])
         
+        cols = st.columns(3)
+        with cols[0]:
+            st.markdown(f"""
+            <div class="stat-card">
+                <div class="stat-value">{len(df)}</div>
+                <div class="stat-label">Subscriptions Found</div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with cols[1]:
+            st.markdown(f"""
+            <div class="stat-card">
+                <div class="stat-value">{selected_count}</div>
+                <div class="stat-label">Selected</div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with cols[2]:
+            time_str = st.session_state.last_scan_time.strftime("%H:%M") if st.session_state.last_scan_time else "N/A"
+            st.markdown(f"""
+            <div class="stat-card">
+                <div class="stat-value" style="font-size: 1.5rem;">{time_str}</div>
+                <div class="stat-label">Last Scan</div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        # 快速操作
+        col1, col2, col3, col4 = st.columns([1, 1, 2, 2])
         with col1:
-            st.markdown(f"""
-            <div class='stat-card'>
-                <div class='stat-number'>{len(df)}</div>
-                <div class='stat-label'>Subscriptions Found</div>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        with col2:
-            selected_count = len(df[df["Select"] == True])
-            st.markdown(f"""
-            <div class='stat-card'>
-                <div class='stat-number'>{selected_count}</div>
-                <div class='stat-label'>Selected</div>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        with col3:
-            if st.session_state.last_scan_time:
-                time_str = st.session_state.last_scan_time.strftime("%H:%M")
-            else:
-                time_str = "N/A"
-            st.markdown(f"""
-            <div class='stat-card'>
-                <div class='stat-number' style='font-size: 1.8rem;'>{time_str}</div>
-                <div class='stat-label'>Last Scan</div>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        st.write("")
-        
-        # 快速选择
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("✅ Select All"):
+            if st.button("Select All", use_container_width=True):
                 df["Select"] = True
                 st.session_state.scan_results = df
                 st.rerun()
         with col2:
-            if st.button("❌ Deselect All"):
+            if st.button("Deselect All", use_container_width=True):
                 df["Select"] = False
                 st.session_state.scan_results = df
                 st.rerun()
         
-        st.write("")
+        st.markdown("<br>", unsafe_allow_html=True)
         
         # 数据表格
         edited_df = st.data_editor(
@@ -642,43 +727,45 @@ else:
                 ),
                 "Email": st.column_config.TextColumn(
                     "Email Address",
-                    width="medium"
+                    width="large"
                 ),
                 "Last Received": st.column_config.TextColumn(
                     "Last Email",
                     width="medium"
                 ),
                 "Unsubscribe": st.column_config.LinkColumn(
-                    "Action",
-                    display_text="🔗 Unsubscribe",
-                    width="small"
+                    "Unsubscribe Link",
+                    display_text="Open Link",
+                    width="medium"
                 ),
             },
             hide_index=True,
             use_container_width=True,
-            height=400,
+            height=700,
             disabled=["Sender", "Email", "Last Received", "Unsubscribe"]
         )
         
-        # 更新选择
         st.session_state.scan_results = edited_df
         
         selected_rows = edited_df[edited_df["Select"] == True]
         selected_senders = selected_rows["Email"].tolist()
         
-        st.write("")
+        st.markdown("<br>", unsafe_allow_html=True)
         
         # 操作按钮
-        col1, col2, col3 = st.columns([1, 1, 1])
+        if len(selected_senders) > 0:
+            st.warning(f"Warning: This will permanently delete all emails from {len(selected_senders)} selected sender(s)")
+        
+        col1, col2, col3 = st.columns(3)
         
         with col1:
-            st.markdown('<div class="scan-btn">', unsafe_allow_html=True)
-            if st.button("🔄 Rescan Inbox", use_container_width=True):
+            st.markdown('<div class="btn-success">', unsafe_allow_html=True)
+            if st.button("Rescan Inbox", use_container_width=True):
                 creds = st.session_state.creds
-                with st.spinner("🔄 Rescanning..."):
+                with st.spinner("Rescanning..."):
                     res = scan_inbox(creds['u'], creds['p'], creds['s'], creds.get('limit', 200))
                     if isinstance(res, str):
-                        st.error(f"❌ {res}")
+                        st.error(res)
                     else:
                         st.session_state.scan_results = pd.DataFrame(res)
                         st.session_state.last_scan_time = datetime.now()
@@ -686,61 +773,59 @@ else:
             st.markdown('</div>', unsafe_allow_html=True)
         
         with col2:
-            if st.button("🏠 Start Over", use_container_width=True):
+            st.markdown('<div class="btn-secondary">', unsafe_allow_html=True)
+            if st.button("Start Over", use_container_width=True):
                 st.session_state.scan_results = None
                 st.session_state.creds = {}
                 st.session_state.last_scan_time = None
                 st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
         
         with col3:
-            st.markdown('<div class="delete-btn">', unsafe_allow_html=True)
+            st.markdown('<div class="btn-danger">', unsafe_allow_html=True)
             if len(selected_senders) > 0:
-                if st.button(f"🗑️ Delete ({len(selected_senders)})", use_container_width=True):
-                    with st.spinner(f"🗑️ Deleting emails from {len(selected_senders)} senders..."):
+                if st.button(f"Delete Selected ({len(selected_senders)})", use_container_width=True):
+                    with st.spinner(f"Deleting emails from {len(selected_senders)} senders..."):
                         creds = st.session_state.creds
                         success, msg = delete_emails(creds['u'], creds['p'], creds['s'], selected_senders)
                         
                         if success:
-                            st.success(f"✅ {msg}")
+                            st.success(msg)
                             time.sleep(2)
                             
-                            # 重新扫描
-                            with st.spinner("🔄 Refreshing..."):
+                            with st.spinner("Refreshing..."):
                                 res = scan_inbox(creds['u'], creds['p'], creds['s'], creds.get('limit', 200))
                                 if not isinstance(res, str):
                                     st.session_state.scan_results = pd.DataFrame(res)
                                     st.session_state.last_scan_time = datetime.now()
                                 st.rerun()
                         else:
-                            st.error(f"❌ {msg}")
+                            st.error(msg)
             else:
-                st.button("🗑️ Delete (0)", disabled=True, use_container_width=True)
+                st.button("Delete Selected (0)", disabled=True, use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
-        
-        # 警告提示
-        if len(selected_senders) > 0:
-            st.warning(f"⚠️ Warning: This will permanently delete ALL emails from the {len(selected_senders)} selected sender(s). This action cannot be undone!")
     
     else:
-        st.balloons()
-        st.success("🎉 Your inbox is clean! No subscriptions found.")
-        st.write("")
+        st.markdown("""
+        <div class="empty-state">
+            <div class="empty-state-icon">✓</div>
+            <h3>Your inbox is clean</h3>
+            <p>No subscriptions found in your mailbox</p>
+        </div>
+        """, unsafe_allow_html=True)
         
-        col1, col2, col3 = st.columns([1, 2, 1])
+        col1, col2, col3 = st.columns([1, 1, 1])
         with col2:
-            if st.button("🏠 Back to Home", use_container_width=True):
+            if st.button("Go Back", use_container_width=True):
                 st.session_state.scan_results = None
                 st.session_state.creds = {}
                 st.session_state.last_scan_time = None
                 st.rerun()
 
-# ==========================================
-# 6. 页脚
-# ==========================================
-st.write("")
-st.write("")
+# 页脚
+st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("""
-<div style='text-align: center; color: var(--text-secondary); font-size: 0.85rem; margin-top: 3rem; opacity: 0.7;'>
-    Made with ❤️ for a cleaner inbox | Your data never leaves your device
+<div style="text-align: center; color: var(--text-tertiary); font-size: 0.875rem;">
+    Your data stays on your device | Open source project
 </div>
 """, unsafe_allow_html=True)
