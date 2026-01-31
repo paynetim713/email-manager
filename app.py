@@ -817,10 +817,6 @@ if st.session_state.scan_results is None:
     )
     
     st.markdown("""
-    <div style="margin: -0.5rem 0 1rem 0; padding: 0.65rem 1rem; 
-                background: linear-gradient(to right, rgba(37, 99, 235, 0.08), rgba(37, 99, 235, 0.05)); 
-                border-left: 3px solid var(--primary); border-radius: 6px;">
-    </div>
     """, unsafe_allow_html=True)
     
     # 密码获取指南
