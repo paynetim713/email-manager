@@ -18,59 +18,38 @@ st.set_page_config(
 )
 
 # ==========================================
-# 专业简洁的CSS设计
+# 修复后的 CSS 设计 (自动适配深色/浅色)
 # ==========================================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-    /* 浅色模式 */
+    /* 关键修复：直接使用 Streamlit 原生变量 
+       这样无论你在 Streamlit 设置中切换 Light 还是 Dark，颜色都会自动正确显示
+    */
     :root {
-        --background: #f8f9fa;
-        --surface: #ffffff;
+        --background: var(--background-color);
+        --surface: var(--secondary-background-color);
         --primary: #2563eb;
         --primary-hover: #1d4ed8;
-        --text-primary: #111827;
-        --text-secondary: #6b7280;
-        --text-tertiary: #9ca3af;
-        --border: #e5e7eb;
-        --border-light: #f3f4f6;
+        --text-primary: var(--primary-text-color);
+        --text-secondary: var(--text-color); 
+        --border: rgba(128, 128, 128, 0.2);
+        --border-light: rgba(128, 128, 128, 0.1);
         --success: #10b981;
         --error: #ef4444;
         --warning: #f59e0b;
         --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
 
-    /* 深色模式 */
-    @media (prefers-color-scheme: dark) {
-        :root {
-            --background: #111827;
-            --surface: #1f2937;
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --text-primary: #f9fafb;
-            --text-secondary: #d1d5db;
-            --text-tertiary: #9ca3af;
-            --border: #374151;
-            --border-light: #2d3748;
-            --success: #34d399;
-            --error: #f87171;
-            --warning: #fbbf24;
-            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-        }
-    }
-
-    /* 全局样式 */
+    /* 全局字体 */
     * {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     .stApp {
         background-color: var(--background);
+        color: var(--text-primary);
     }
 
     .main .block-container {
@@ -78,7 +57,7 @@ st.markdown("""
         padding: 2rem 1rem;
     }
 
-    /* 标题区域 */
+    /* 标题区域 - 强制使用高亮文字 */
     .header-container {
         text-align: center;
         margin-bottom: 3rem;
@@ -87,475 +66,129 @@ st.markdown("""
     }
 
     .main-title {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--text-primary);
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--text-primary); /* 关键：跟随主题变色 */
         margin: 0 0 0.5rem 0;
         letter-spacing: -0.025em;
     }
 
     .subtitle {
-        font-size: 1rem;
+        font-size: 1.1rem;
         color: var(--text-secondary);
         font-weight: 400;
         margin: 0;
+        opacity: 0.8;
     }
 
-    /* 卡片样式 */
-    .card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-        box-shadow: var(--shadow);
-    }
-
-    .card-title {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin: 0 0 1rem 0;
-    }
-
-    /* 输入框 */
-    .stTextInput > div > div,
-    .stNumberInput > div > div {
-        background-color: var(--surface) !important;
-        border: 1px solid var(--border) !important;
-        border-radius: 6px !important;
-    }
-
-    .stTextInput > div > div:focus-within,
-    .stNumberInput > div > div:focus-within {
-        border-color: var(--primary) !important;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
-    }
-
-    input {
-        color: var(--text-primary) !important;
-        font-size: 0.9rem !important;
-    }
-
-    input::placeholder {
-        color: var(--text-tertiary) !important;
-    }
-
-    label {
-        color: var(--text-secondary) !important;
-        font-size: 0.875rem !important;
-        font-weight: 500 !important;
-        margin-bottom: 0.5rem !important;
-    }
-
-    /* 按钮 */
-    .stButton > button {
-        background-color: var(--primary) !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 6px !important;
-        font-size: 0.9rem !important;
-        font-weight: 600 !important;
-        padding: 0.6rem 1.2rem !important;
-        transition: all 0.2s !important;
-        box-shadow: var(--shadow) !important;
-    }
-
-    .stButton > button:hover {
-        background-color: var(--primary-hover) !important;
-        box-shadow: var(--shadow-md) !important;
-    }
-
-    .stButton > button:disabled {
-        opacity: 0.5 !important;
-        cursor: not-allowed !important;
-    }
-
-    /* 按钮变体 */
-    .btn-danger button {
-        background-color: var(--error) !important;
-    }
-
-    .btn-danger button:hover {
-        background-color: #dc2626 !important;
-    }
-
-    .btn-success button {
-        background-color: var(--success) !important;
-    }
-
-    .btn-success button:hover {
-        background-color: #059669 !important;
-    }
-
-    .btn-secondary button {
-        background-color: var(--border-light) !important;
-        color: var(--text-primary) !important;
-    }
-
-    .btn-secondary button:hover {
-        background-color: var(--border) !important;
-    }
-
-    /* 统计卡片 */
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-
-    .stat-card {
+    /* 卡片通用样式 */
+    .stat-card, .card {
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: 8px;
         padding: 1.25rem;
-        text-align: center;
     }
 
-    .stat-value {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--primary);
-        margin: 0;
-        line-height: 1;
-    }
-
-    .stat-label {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-        margin-top: 0.5rem;
-        font-weight: 500;
-    }
-
-    /* 表格 */
-    [data-testid="stDataFrame"] {
+    /* 输入框样式修复 */
+    .stTextInput > div > div,
+    .stNumberInput > div > div {
+        background-color: var(--surface) !important;
+        color: var(--text-primary) !important;
         border: 1px solid var(--border) !important;
-        border-radius: 8px !important;
-        overflow: hidden !important;
-    }
-
-    [data-testid="stDataFrame"] th {
-        background-color: var(--border-light) !important;
-        color: var(--text-primary) !important;
-        font-weight: 600 !important;
-        font-size: 0.875rem !important;
-        padding: 0.75rem !important;
-    }
-
-    [data-testid="stDataFrame"] td {
-        color: var(--text-secondary) !important;
-        font-size: 0.875rem !important;
-        padding: 0.75rem !important;
-    }
-
-    /* 提示信息 */
-    .stAlert {
         border-radius: 6px !important;
-        border: 1px solid transparent !important;
-        font-size: 0.9rem !important;
-    }
-
-    .stSuccess {
-        background-color: rgba(16, 185, 129, 0.1) !important;
-        border-color: var(--success) !important;
-        color: var(--text-primary) !important;
-    }
-
-    .stError {
-        background-color: rgba(239, 68, 68, 0.1) !important;
-        border-color: var(--error) !important;
-        color: var(--text-primary) !important;
-    }
-
-    .stWarning {
-        background-color: rgba(245, 158, 11, 0.1) !important;
-        border-color: var(--warning) !important;
-        color: var(--text-primary) !important;
-    }
-
-    .stInfo {
-        background-color: rgba(37, 99, 235, 0.1) !important;
-        border-color: var(--primary) !important;
-        color: var(--text-primary) !important;
-    }
-
-    /* 滑块容器 */
-    .stSlider {
-        padding: 0 !important;
-        margin: 0.5rem 0 !important;
-    }
-
-    /* 滑块标签（隐藏） */
-    .stSlider label {
-        display: none !important;
     }
     
-    /* 隐藏所有刻度相关元素 */
-    .stSlider [data-testid*="stTickBar"] {
-        display: none !important;
-    }
-    
-    .stSlider [data-testid="stTickBar"],
-    .stSlider [data-testid="stTickBarMin"],
-    .stSlider [data-testid="stTickBarMax"] {
-        display: none !important;
-    }
-
-    /* 滑块主容器 */
-    .stSlider > div {
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-    /* 滑块轨道容器 */
-    .stSlider [data-baseweb="slider"] {
-        padding-top: 0.25rem !important;
-        padding-bottom: 0.25rem !important;
-        margin: 0 !important;
-    }
-
-    /* 滑块轨道 */
-    .stSlider [data-baseweb="slider"] {
-        padding-top: 0.5rem !important;
-        padding-bottom: 0.5rem !important;
-    }
-
-    /* 滑块轨道背景 */
-    .stSlider [data-baseweb="slider"] > div:first-child {
-        background: linear-gradient(to right, var(--border-light), var(--border)) !important;
-        height: 6px !important;
-        border-radius: 3px !important;
-    }
-
-    /* 滑块已填充部分 */
-    .stSlider [data-baseweb="slider"] > div:first-child > div {
-        background: linear-gradient(to right, var(--primary), #3b82f6) !important;
-        height: 6px !important;
-        border-radius: 3px !important;
-        box-shadow: 0 0 8px rgba(37, 99, 235, 0.2) !important;
-    }
-
-    /* 滑块按钮 */
-    .stSlider [data-baseweb="slider"] > div:last-child > div {
-        background-color: var(--primary) !important;
-        border: 3px solid var(--surface) !important;
-        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
-        width: 20px !important;
-        height: 20px !important;
-        top: -8px !important;
-        transition: all 0.2s ease !important;
-    }
-
-    /* 滑块按钮悬停 */
-    .stSlider [data-baseweb="slider"] > div:last-child > div:hover {
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.15) !important;
-        transform: scale(1.15) !important;
-    }
-    
-    /* 滑块按钮激活 */
-    .stSlider [data-baseweb="slider"] > div:last-child > div:active {
-        transform: scale(1.05) !important;
-    }
-
-    /* 当前值显示 */
-    .stSlider [data-baseweb="slider"] [role="slider"] {
+    /* 输入框文字颜色强制适配 */
+    .stTextInput input {
         color: var(--text-primary) !important;
     }
 
-    /* Expander */
+    /* Expander (折叠面板) 标题颜色修复 */
     .streamlit-expanderHeader {
         background-color: var(--surface) !important;
-        border: 1px solid var(--border) !important;
-        border-radius: 6px !important;
         color: var(--text-primary) !important;
-        font-weight: 500 !important;
-        font-size: 0.9rem !important;
-        padding: 0.75rem 1rem !important;
+        border: 1px solid var(--border) !important;
+        font-weight: 600 !important;
     }
     
-    .streamlit-expanderHeader:hover {
-        border-color: var(--primary) !important;
+    .streamlit-expanderHeader p {
+        font-size: 1rem !important;
+        color: var(--text-primary) !important;
+        font-weight: 600 !important;
     }
-    
+
     .streamlit-expanderContent {
         background-color: var(--surface) !important;
         border: 1px solid var(--border) !important;
         border-top: none !important;
-        border-radius: 0 0 6px 6px !important;
-        padding: 1rem !important;
+        color: var(--text-secondary) !important;
     }
 
-    /* Tabs */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 0.5rem;
-        background-color: var(--border-light);
-        padding: 0.25rem;
-        border-radius: 6px;
+    /* 按钮样式 */
+    .stButton > button {
+        background-color: var(--primary) !important;
+        color: white !important;
+        border: none !important;
+        padding: 0.6rem 1.2rem !important;
+        font-weight: 600 !important;
+        transition: opacity 0.2s;
+    }
+    
+    .stButton > button:hover {
+        opacity: 0.9;
     }
 
-    .stTabs [data-baseweb="tab"] {
-        background-color: transparent;
-        border: none;
-        color: var(--text-secondary);
-        font-weight: 500;
-        font-size: 0.875rem;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        transition: all 0.2s;
+    /* 按钮颜色变体 */
+    .btn-danger button { background-color: var(--error) !important; }
+    .btn-success button { background-color: var(--success) !important; }
+    .btn-secondary button { 
+        background-color: var(--surface) !important; 
+        color: var(--text-primary) !important;
+        border: 1px solid var(--border) !important;
     }
 
-    .stTabs [data-baseweb="tab"]:hover {
-        background-color: rgba(37, 99, 235, 0.1);
+    /* 统计数字 */
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
         color: var(--primary);
     }
-
-    .stTabs [data-baseweb="tab"][aria-selected="true"] {
-        background-color: var(--primary);
-        color: white;
+    
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
     }
 
-    .stTabs [data-baseweb="tab-panel"] {
-        padding: 0;
+    /* 滑块修复 */
+    .stSlider [data-testid="stMarkdownContainer"] p {
+        color: var(--text-primary) !important;
+        font-weight: 500;
     }
-
-    /* 链接样式优化 */
+    
+    /* 链接颜色 */
     a {
         color: var(--primary) !important;
-        text-decoration: none;
-        font-weight: 500;
-        transition: all 0.2s ease;
     }
-
-    a:hover {
-        opacity: 0.8;
-        text-decoration: underline;
-    }
-
-    /* 按钮式链接 */
-    a[style*="border-radius"][style*="padding"] {
-        transition: all 0.2s ease !important;
-    }
-
-    a[style*="border-radius"][style*="padding"]:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-sm);
-        text-decoration: none !important;
-        opacity: 1 !important;
-    }
-
-    /* 主要操作链接按钮 */
-    a[style*="background: var(--primary)"] {
-        box-shadow: var(--shadow-sm);
-    }
-
-    a[style*="background: var(--primary)"]:hover {
-        background: var(--primary-hover) !important;
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md) !important;
-    }
-
-    /* 列表样式 */
-    ol, ul {
+    
+    /* 列表文字 */
+    li, p {
         color: var(--text-secondary);
     }
-
-    ol li, ul li {
-        margin: 0.5rem 0;
-        line-height: 1.6;
-    }
-
+    
+    /* 确保重要文本在深色模式下可见 */
     strong {
         color: var(--text-primary);
-        font-weight: 600;
     }
-
-    /* 进度条 */
-    .stProgress > div > div {
-        background-color: var(--primary) !important;
-    }
-
-    /* 隐藏元素 */
+    
+    /* 隐藏多余元素 */
     header, footer, #MainMenu {
         visibility: hidden;
-    }
-
-    /* 帮助文本 */
-    .help-text {
-        font-size: 0.875rem;
-        color: var(--text-tertiary);
-        margin-top: 0.25rem;
-    }
-
-    /* 分隔线 */
-    hr {
-        border: none;
-        border-top: 1px solid var(--border);
-        margin: 2rem 0;
-    }
-
-    /* 操作按钮组 */
-    .action-buttons {
-        display: flex;
-        gap: 0.75rem;
-        margin-top: 1.5rem;
-    }
-
-    /* 信息列表 */
-    .info-list {
-        list-style: none;
-        padding: 0;
-        margin: 1rem 0;
-    }
-
-    .info-list li {
-        color: var(--text-secondary);
-        padding: 0.5rem 0;
-        border-bottom: 1px solid var(--border-light);
-        font-size: 0.9rem;
-    }
-
-    .info-list li:last-child {
-        border-bottom: none;
-    }
-
-    .info-list strong {
-        color: var(--text-primary);
-        font-weight: 600;
-    }
-
-    /* 空状态 */
-    .empty-state {
-        text-align: center;
-        padding: 3rem 1rem;
-        color: var(--text-secondary);
-    }
-
-    .empty-state-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-        opacity: 0.5;
-    }
-
-    /* 响应式 */
-    @media (max-width: 768px) {
-        .main .block-container {
-            padding: 1rem 0.5rem;
-        }
-
-        .main-title {
-            font-size: 1.5rem;
-        }
-
-        .stats-grid {
-            grid-template-columns: 1fr;
-        }
     }
 </style>
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 核心功能函数
+# 核心功能函数 (保持不变)
 # ==========================================
 
 def decode_field(header_value):
@@ -943,26 +576,15 @@ if st.session_state.scan_results is None:
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # 滑块区域 - SCAN DEPTH LABEL REMOVED
-    st.markdown("""
-    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.875rem 1rem; margin-bottom: 1.5rem;">
-    """, unsafe_allow_html=True)
-    
+    # 滑块区域 - 移除复杂的HTML容器，直接使用Streamlit原生组件以获得更好的兼容性
     limit = st.slider(
-        "Number of emails to scan",
+        "Scan Limit (Number of emails to check)",
         min_value=50,
         max_value=1000,
         value=200,
         step=50,
-        label_visibility="collapsed"
+        help="Higher numbers take longer to scan"
     )
-    
-    st.markdown(f"""
-        <p style="color: var(--text-tertiary); font-size: 0.75rem; margin: 0.4rem 0 0 0; text-align: center;">
-            Scanning <strong style="color: var(--primary);">{limit}</strong> emails
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
     
     st.markdown("<br>", unsafe_allow_html=True)
     
