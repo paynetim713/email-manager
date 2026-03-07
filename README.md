@@ -9,3 +9,4 @@ Quick Start (快速开始)
 1. Install Dependencies (安装依赖)
 ```bash
 pip install -r requirements.txt
+LINK:https://email-manager-f9xbsvcjdadz9qbymoia72.streamlit.app/
