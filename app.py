@@ -17,16 +17,10 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ==========================================
-# 修复后的 CSS 设计 (自动适配深色/浅色)
-# ==========================================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-    /* 关键修复：直接使用 Streamlit 原生变量 
-       这样无论你在 Streamlit 设置中切换 Light 还是 Dark，颜色都会自动正确显示
-    */
     :root {
         --background: var(--background-color);
         --surface: var(--secondary-background-color);
@@ -57,7 +51,7 @@ st.markdown("""
         padding: 2rem 1rem;
     }
 
-    /* 标题区域 - 强制使用高亮文字 */
+    /* 标题区域  */
     .header-container {
         text-align: center;
         margin-bottom: 3rem;
@@ -68,7 +62,7 @@ st.markdown("""
     .main-title {
         font-size: 2.2rem;
         font-weight: 800;
-        color: var(--text-primary); /* 关键：跟随主题变色 */
+        color: var(--text-primary);
         margin: 0 0 0.5rem 0;
         letter-spacing: -0.025em;
     }
@@ -180,16 +174,12 @@ st.markdown("""
         color: var(--text-primary);
     }
     
-    /* 隐藏多余元素 */
     header, footer, #MainMenu {
         visibility: hidden;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ==========================================
-# 核心功能函数 (保持不变)
-# ==========================================
 
 def decode_field(header_value):
     if not header_value:
@@ -576,7 +566,7 @@ if st.session_state.scan_results is None:
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # 滑块区域 - 移除复杂的HTML容器，直接使用Streamlit原生组件以获得更好的兼容性
+    # 滑块区域 
     limit = st.slider(
         "Scan Limit (Number of emails to check)",
         min_value=50,
